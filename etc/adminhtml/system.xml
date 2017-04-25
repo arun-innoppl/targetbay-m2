@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Config/etc/system_file.xsd">
+    <system>
+        <tab id="tracking" translate="label" sortOrder="100">
+            <label>tracking</label>
+        </tab>
+ 
+	<section id="targetbay_tracking" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Tracking Configurations</label>
+            <tab>tracking</tab>
+            <resource>Targetbay_Tracking::targetbay_tracking</resource>
+            <group id="tracking_groups" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Tracking Setup</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Module:</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        Enable or disable the tracking module.
+                    </comment>
+                </field>
+                <field id="api_token" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Api Token</label>
+                </field>
+                <field id="api_index" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Api Index</label>
+                </field>
+                <field id="page_types" translate="label" type="multiselect" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Select Page Types</label>
+                    <source_model>Targetbay\Tracking\Model\System\Config\Source\Page</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="tracking_script" translate="label" type="textarea" sortOrder="165" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Tracking Script</label>
+                </field>
+                <field id="reviews_per_page" translate="label" type="text" sortOrder="174" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Reviews per page</label>
+                </field>
+                <field id="debug" translate="label comment" type="select" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Debug:</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        Enable or disable the Debugging.
+                    </comment>
+                </field>
+                <field id="disable_email" translate="label" type="select" sortOrder="176" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Disable email:</label>
+                    <source_model>Targetbay\Tracking\Model\System\Config\Source\Yesno</source_model>
+                    <comment>
+                        Enable or disable customer welcome mail and newsletter subscription mail
+                    </comment>
+                </field>
+                <field id="debug_file" translate="label" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Log File Name</label>
+                    <comment>
+                        Log the info
+                    </comment>
+                </field>
+            </group>
+            <group id="coupon_configuration" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Coupon Code Configuration</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Coupon:</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        Enable or disable the coupon code generation.
+                    </comment>
+                </field>
+                <field id="length" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Code Length</label>
+                    <comment>Excluding prefix, suffix and separators.</comment>
+                    <frontend_class>validate-digits</frontend_class>
+                </field>
+                <field id="format" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Code Format</label>
+                    <source_model>Magento\SalesRule\Model\System\Config\Source\Coupon\Format</source_model>
+                </field>
+                <field id="prefix" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Code Prefix</label>
+                </field>
+                <field id="suffix" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Code Suffix</label>
+                </field>
+            </group>
+        </section>
+ 
+    </system>
+</config>

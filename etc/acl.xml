@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+	<acl>
+		<resources>
+			<resource id="Magento_Backend::admin">
+				<resource id="Targetbay_Tracking::tracking" title="Tracking" sortOrder="40">
+				    <resource id="Targetbay_Tracking::listproducts" title="All Products" sortOrder="10" />
+				    <resource id="Targetbay_Tracking::totalproductcount" title="Total Product Counts" sortOrder="12" />
+				    <resource id="Targetbay_Tracking::orders" title="All Orders" sortOrder="14" />
+				    <resource id="Targetbay_Tracking::totalordercount" title="Total Order Count" sortOrder="16" />
+				    <resource id="Targetbay_Tracking::category" title="All Category" sortOrder="18" />
+				    <resource id="Targetbay_Tracking::totalcategorycount" title="Total Category Count" sortOrder="20" />
+				    <resource id="Targetbay_Tracking::customer" title="All Customer" sortOrder="22" />
+				    <resource id="Targetbay_Tracking::totalcustomercount" title="Total Customer Count" sortOrder="24" />
+				    <resource id="Targetbay_Tracking::customeraddress" title="All Customer Address" sortOrder="26" />
+				    <resource id="Targetbay_Tracking::subscribers" title="All Subscribers" sortOrder="28" />
+				    <resource id="Targetbay_Tracking::totalsubscribercount" title="Total Subscription Count" sortOrder="30" />
+				    <resource id="Targetbay_Tracking::createsubscription" title="Create Subscription" sortOrder="32" />
+				    <resource id="Targetbay_Tracking::updatesubscription" title="Update Subscription" sortOrder="34" />
+				    <resource id="Targetbay_Tracking::totalcartitemcount" title="Total Cart Item Count" sortOrder="36" />
+				    <resource id="Targetbay_Tracking::cartitems" title="Customer Cart Items" sortOrder="38" />
+				    <resource id="Targetbay_Tracking::totalwishlistcount" title="Total Wishlist Count" sortOrder="40" />
+				    <resource id="Targetbay_Tracking::wishlist" title="Customer Wishlist" sortOrder="42" />
+				    <resource id="Targetbay_Tracking::getcoupon" title="Get all coupons" sortOrder="44" />
+				    <resource id="Targetbay_Tracking::createcoupon" title="Create Coupon" sortOrder="46" />
+				    <resource id="Targetbay_Tracking::updatecoupon" title="Update Coupon" sortOrder="48" />
+				    <!--resource id="Targetbay_Tracking::updaterewardpoints" title="Reward Points" sortOrder="50" /-->
+				</resource>
+				<resource id="Magento_Backend::stores">
+				    <resource id="Magento_Backend::stores_settings">
+				        <resource id="Magento_Config::config">
+				            <resource id="Targetbay_Tracking::config_tracking" title="Tracking Configuration" sortOrder="100" />
+				        </resource>
+				    </resource>
+				</resource>
+			</resource>
+		</resources>
+	</acl>
+</config>

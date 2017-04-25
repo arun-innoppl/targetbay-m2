@@ -1,0 +1,107 @@
+<?php
+/**
+ * Copyright © 2016-2017 Targetbay. All rights reserved.
+ */
+
+// @codingStandardsIgnoreFile
+?>
+<?php
+/**
+ * Product list template
+ *
+ * @var $block \Magento\Targetbay\Block\Tracking\Tracking
+ */
+?>
+<?php
+$trackingHelper = $this->helper('Targetbay\Tracking\Helper\Data');
+
+$_productInfo = $block->getProductInfo();
+$_userInfo = $block->getUserInfo();
+$visitorName = \Targetbay\Tracking\Helper\Data::ANONYMOUS_USER;
+
+$pageVisitData = ''; $pageVisitUrl = ''; $trackingTypeVal = '';
+$_productName = ''; $_productId = ''; $_productImage = ''; $_productUrl = '';
+$_userId = ''; $_userEmail = ''; $_userName = '';
+if (isset($_productInfo) && !empty($_productInfo)) {
+    $_productId = $_productInfo['product_id'] ? $_productInfo['product_id'] : '';
+    $_productName = $_productInfo['product_name'] ? $_productInfo['product_name'] : '';
+    $_productImage = $_productInfo['product_image'] ? $_productInfo['product_image'] : '';
+    $_productUrl = $_productInfo['product_url'] ? $_productInfo['product_url'] : '';
+}
+
+if (isset($_userInfo)) {
+    $_userId = $_userInfo['user_id'] ? $_userInfo['user_id'] : '';
+    $_userEmail = $_userInfo['user_email'] ? $_userInfo['user_email'] : '';
+    $_userName = $_userInfo['user_name'] ? $_userInfo['user_name'] : $visitorName;
+}
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$requestInterface = $objectManager->get('Magento\Framework\App\RequestInterface');
+$controllerName = $requestInterface->getControllerName();
+if ($controllerName == "product") {
+    $pageVisitUrl = $trackingHelper->getApiUrl();
+    $pageVisitData = $trackingHelper->getPageInfo();
+}
+
+$hostUrl = $trackingHelper->getHostname();
+$apiToken = $trackingHelper->getApiToken();
+$apiKey = $trackingHelper->getApiIndex();
+$moduleVersion = $trackingHelper->getModuleVersion();
+$apiStatus = $trackingHelper->getApiStatus();
+$trackingEnabled = $trackingHelper->trackingEnabled();
+
+if ($trackingEnabled) :
+
+    $trackingScript = $trackingHelper->getTrackingScript();
+    if ($trackingScript) {
+        $trackingCode = $trackingScript;
+    } else {
+        $trackingCode = 'tbTrack: true,
+			 tbMessage: true,
+			 tbReview: {
+				tbSiteReview: false,	
+				tbProductReview: true,
+				tbBulkReview: true,
+				tbQa: true
+				}';
+    }
+    ?>
+
+    <div id="targetbay_message"></div>
+    <div id="targetbay_site_reviews"></div>
+    <script type="text/javascript">
+        tbConfig = {
+            apiStatus: '<?php echo $apiStatus;?>',
+            apiKey: '<?php echo $apiKey;?>',
+            apiToken: '<?php echo $apiToken;?>',
+            apiUrl: '<?php echo $hostUrl;?>',
+            apiVersion: 'v2',
+            trackingType: '1',
+            moduleVersion: '<?php echo $moduleVersion;?>',
+            productName: '<?php echo $block->escapeQuote($_productName); ?>',
+            productId: '<?php echo $_productId; ?>',
+            productImageUrl: '<?php echo $_productImage; ?>',
+            productUrl: '<?php echo $_productUrl; ?>',
+            userId: '<?php echo $_userId; ?>',
+            userMail: '<?php echo $_userEmail; ?>',
+            userName: '<?php echo $_userName; ?>',
+            userAvatar: '',
+            pageUrl: '<?php echo $pageVisitUrl;?>',
+            pageData: '<?php echo json_encode($pageVisitData);?>',
+            <?php echo $trackingCode; ?>
+        };
+        (function (d, u, tb) {
+            var s = d.scripts[0],
+                i = u.length, g;
+            while (i--) {
+                g = d.createElement('script');
+                g.src = 'https://' + tb.apiStatus + '.targetbay.com/js/tb-' + u[i] + '.js';
+                g.type = 'text/javascript';
+                g.async = 'true';
+                s.parentNode.insertBefore(g, s);
+            }
+        })(document, [
+            'track'
+        ], tbConfig);
+    </script>
+<?php endif; ?>

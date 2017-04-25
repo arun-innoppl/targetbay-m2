@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <targetbay_tracking>
+            <tracking_groups>
+                <enabled>1</enabled>
+                <hostname>https://app.targetbay.com/api/v1/webhooks/</hostname>
+                <reviews_per_page>20</reviews_per_page>
+                <debug>2</debug>
+            </tracking_groups>
+        </targetbay_tracking>
+    </default>
+</config>

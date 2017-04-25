@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author TargetBay
+ * @copyright Copyright (c) 2016 Targetbay 
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+	<preference for="Targetbay\Tracking\Api\ProductInterface" type="Targetbay\Tracking\Model\Product" />
+	<preference for="Targetbay\Tracking\Api\TotalProductInterface" type="Targetbay\Tracking\Model\TotalProduct" />
+	<preference for="Targetbay\Tracking\Api\ListProductInterface" type="Targetbay\Tracking\Model\ListProducts" />
+	<preference for="Targetbay\Tracking\Api\TotalOrderInterface" type="Targetbay\Tracking\Model\TotalOrder" />
+	<preference for="Targetbay\Tracking\Api\OrderRepoInterface" type="Targetbay\Tracking\Model\OrderRepo" />
+	<preference for="Targetbay\Tracking\Api\TotalCategoryInterface" type="Targetbay\Tracking\Model\TotalCategory" />
+	<preference for="Targetbay\Tracking\Api\CategoryRepoInterface" type="Targetbay\Tracking\Model\CategoryRepo" />
+	<preference for="Targetbay\Tracking\Api\TotalCustomerInterface" type="Targetbay\Tracking\Model\TotalCustomer" />
+	<preference for="Targetbay\Tracking\Api\CustomerRepoInterface" type="Targetbay\Tracking\Model\CustomerRepo" />
+	<preference for="Targetbay\Tracking\Api\TotalReviewInterface" type="Targetbay\Tracking\Model\TotalReview" />
+	<preference for="Targetbay\Tracking\Api\ReviewRepoInterface" type="Targetbay\Tracking\Model\ReviewRepo" />
+	<preference for="Targetbay\Tracking\Api\TbreviewcountInterface" type="Targetbay\Tracking\Model\Tbreviewcount" />
+	<preference for="Targetbay\Tracking\Api\CustomerAddressRepoInterface" type="Targetbay\Tracking\Model\CustomerAddressRepo" />
+	<preference for="Targetbay\Tracking\Api\TotalSubscriberInterface" type="Targetbay\Tracking\Model\TotalSubscriber" />
+	<preference for="Targetbay\Tracking\Api\SubscriberRepoInterface" type="Targetbay\Tracking\Model\SubscriberRepo" />
+	<preference for="Targetbay\Tracking\Api\UpdateSubscriptionInterface" type="Targetbay\Tracking\Model\UpdateSubscription" />
+	<preference for="Targetbay\Tracking\Api\CreateSubscriptionInterface" type="Targetbay\Tracking\Model\CreateSubscription" />
+	<preference for="Targetbay\Tracking\Api\TotalCartItemInterface" type="Targetbay\Tracking\Model\TotalCartItem" />
+	<preference for="Targetbay\Tracking\Api\CartItemRepoInterface" type="Targetbay\Tracking\Model\CartItemRepo" />
+	<preference for="Targetbay\Tracking\Api\TotalWishlistInterface" type="Targetbay\Tracking\Model\TotalWishlist" />
+	<preference for="Targetbay\Tracking\Api\WishlistRepoInterface" type="Targetbay\Tracking\Model\WishlistRepo" />
+	<preference for="Targetbay\Tracking\Api\GetCouponInterface" type="Targetbay\Tracking\Model\GetCouponRepo" />
+	<preference for="Targetbay\Tracking\Api\CreateCouponInterface" type="Targetbay\Tracking\Model\CreateCouponRepo" />
+	<preference for="Targetbay\Tracking\Api\UpdateCouponInterface" type="Targetbay\Tracking\Model\UpdateCouponRepo" />
+	<preference for="Targetbay\Tracking\Api\UpdateRewardPointsInterface" type="Targetbay\Tracking\Model\UpdateRewardPoints" />
+	<preference for="Magento\Customer\Model\EmailNotification" type="Targetbay\Tracking\Model\Customer\EmailNotification" />
+	<preference for="Magento\Newsletter\Model\Subscriber" type="Targetbay\Tracking\Model\Customer\Subscriber" />
+</config>

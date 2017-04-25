@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author TargetBay
+ * @copyright Copyright (c) 2016 Targetbay 
+ * @package Targetbay tracking
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+	<event name="controller_action_postdispatch">
+		<observer name="targetbay_tracking_event_page_visit" instance="Targetbay\Tracking\Observer\EventHandles" />
+	</event>
+	<!--<event name="controller_action_postdispatch_cms_index_index">
+		<observer name="targetbay_tracking_event_cms_visit" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event>-->
+	<event name="controller_action_postdispatch_cms_page_view">
+		<observer name="targetbay_tracking_event_cms_page_visit" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event>
+	<event name="checkout_cart_add_product_complete">
+		<observer name="targetbay_tracking_event_add_cart" instance="Targetbay\Tracking\Observer\AddCartEventHandler" />
+	</event>
+	<event name="checkout_cart_update_items_before">
+		<observer name="targetbay_tracking_event_update_cart" instance="Targetbay\Tracking\Observer\UpdateCartEventHandler" />
+	</event>
+	<event name="sales_quote_remove_item">
+		<observer name="targetbay_tracking_event_delete_cart" instance="Targetbay\Tracking\Observer\DeleteCartEventHandler" />
+	</event>
+	<event name="controller_action_predispatch_checkout_cart_index">
+		<observer name="targetbay_tracking_event_cart_index_visit" instance="Targetbay\Tracking\Observer\CartEventHandler" />
+	</event>
+	<event name="controller_action_postdispatch_checkout_cart_index">
+		<observer name="targetbay_tracking_event_cart_visit" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event>
+	<event name="controller_action_predispatch_checkout_cart_updatePost">
+		<observer name="targetbay_tracking_event_cart_empty" instance="Targetbay\Tracking\Observer\EmptyCartEventHandler" />
+	</event>
+	<event name="controller_action_postdispatch_checkout_index_index">
+	<observer name="targetbay_tracking_event_checkout_visit" instance="Targetbay\Tracking\Observer\CheckoutEventHandler" />
+	</event>
+	<!--<event name="sales_convert_quote_to_order">
+		<observer name="targetbay_tracking_event_sales_ship_bill" instance="Targetbay\Tracking\Observer\SaveAddressDataEventHandler" />
+	</event>-->
+	<event name="controller_action_postdispatch_customer_account_editPost">
+		<observer name="targetbay_tracking_event_customer_visit" instance="Targetbay\Tracking\Observer\SaveAccountDataEventHandler" />
+	</event>
+	<event name="sales_order_save_after">
+		<observer name="targetbay_tracking_event_sales_order" instance="Targetbay\Tracking\Observer\CreateOrderEventHandler" />
+	</event>
+	<event name="customer_register_success">
+		<observer name="targetbay_tracking_event_customer_register" instance="Targetbay\Tracking\Observer\UserRegisterEventHandler" />
+	</event>
+	<event name="customer_login">
+		<observer name="targetbay_tracking_event_customer_login" instance="Targetbay\Tracking\Observer\UserLoginEventHandler" />
+	</event>
+	<!--<event name="customer_logout">
+		<observer name="targetbay_tracking_event_customer_logout" instance="Targetbay\Tracking\Observer\UserLogoutEventHandler" />
+	</event>-->
+	<event name="catalog_product_save_after">
+		<observer name="targetbay_tracking_event_add_product" instance="Targetbay\Tracking\Observer\AddProductEventHandler" />
+	</event>
+	<!--<event name="controller_action_postdispatch_catalog_category_view">
+		<observer name="targetbay_tracking_event_category_visit" instance="Targetbay\Tracking\Observer\CategoryViewEventHandler" />
+	</event>-->
+	<event name="controller_action_postdispatch_catalog_product_view">
+		<observer name="targetbay_tracking_event_product_visit" instance="Targetbay\Tracking\Observer\ProductViewEventHandler" />
+	</event>
+	<!--<event name="controller_action_postdispatch_catalogsearch_result_index">
+		<observer name="targetbay_tracking_event_product_search" instance="Targetbay\Tracking\Observer\SearchProductEventHandler" />
+	</event>-->
+	<!--<event name="wishlist_product_add_after">
+		<observer name="targetbay_tracking_event_add_wishlist" instance="Targetbay\Tracking\Observer\AddWishlistEventHandler" />
+	</event>
+	<event name="controller_action_predispatch_wishlist_index_update">
+		<observer name="targetbay_tracking_event_update_wishlist" instance="Targetbay\Tracking\Observer\UpdateWishlistEventHandler" />
+	</event>
+	<event name="controller_action_predispatch_wishlist_index_remove">
+		<observer name="targetbay_tracking_event_delete-wishlist" instance="Targetbay\Tracking\Observer\DeleteWishlistEventHandler" />
+	</event>-->
+	<event name="controller_action_postdispatch_wishlist_index_index">
+		<observer name="targetbay_tracking_event_wishlist_visit" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event>
+	<event name="controller_action_postdispatch_newsletter_subscriber_new">
+		<observer name="targetbay_tracking_event_add_subscriber" instance="Targetbay\Tracking\Observer\SubscribeCustomerEventHandler" />
+	</event>
+	<event name="controller_action_postdispatch_newsletter_manage_save">
+		<observer name="targetbay_tracking_event_update_susbcriber" instance="Targetbay\Tracking\Observer\SubscribeCustomerEventHandler" />
+	</event>
+	<event name="controller_action_postdispatch_sales_order_history">
+		<observer name="targetbay_tracking_event_sales_order_history" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event>
+	<event name="controller_action_postdispatch_sales_order_view">
+		<observer name="targetbay_tracking_event_sales_order_view" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event>
+	<!--event name="controller_action_postdispatch_reward_customer_info">
+		<observer name="targetbay_tracking_event_reward_customer_info" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event>
+	<event name="controller_action_postdispatch_rma_returns_history">
+		<observer name="targetbay_tracking_event_rma_returns_history" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event>
+	<event name="controller_action_postdispatch_storecredit_info_index">
+		<observer name="targetbay_tracking_event_storecredit_info_visit" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event>
+	<event name="controller_action_postdispatch_giftcard_customer_index">
+		<observer name="targetbay_tracking_event_giftcard_customer_visit" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event-->
+	<event name="controller_action_postdispatch_review_customer_index">
+		<observer name="targetbay_tracking_event_review_customer_visit" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
+	</event>
+</config>

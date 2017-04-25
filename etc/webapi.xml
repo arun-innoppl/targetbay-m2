@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+<!-- 
+/*** @author Targetbay Team 
+ * @copyright Copyright (c) 2016 Targetbay 
+ * @package Targetbay_Tracking 
+ */ 
+-->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../app/code/Magento/Webapi/etc/webapi.xsd">
+
+    <!-- Example: curl http://localhost/magento_21/rest/V1/totalproduct/add/1/2 -->
+    <route url="/V1/targetbay/totalproductcount" method="GET">
+        <service class="Targetbay\Tracking\Api\TotalProductInterface" method="totalproductcount"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::totalproductcount" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/products" method="GET">
+        <service class="Targetbay\Tracking\Api\ProductInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::products" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/listproducts" method="GET">
+        <service class="Targetbay\Tracking\Api\ListProductInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::listproducts" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/totalordercount" method="GET">
+        <service class="Targetbay\Tracking\Api\TotalOrderInterface" method="totalordercount"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::totalordercount" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/orders" method="GET">
+        <service class="Targetbay\Tracking\Api\OrderRepoInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::orders" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/totalcategorycount" method="GET">
+        <service class="Targetbay\Tracking\Api\TotalCategoryInterface" method="totalcategorycount"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::totalcategorycount" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/category" method="GET">
+        <service class="Targetbay\Tracking\Api\CategoryRepoInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::category" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/totalcustomercount" method="GET">
+        <service class="Targetbay\Tracking\Api\TotalCustomerInterface" method="totalcustomercount"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::totalcustomercount" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/customer" method="GET">
+        <service class="Targetbay\Tracking\Api\CustomerRepoInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::customer" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/customeraddress" method="GET">
+        <service class="Targetbay\Tracking\Api\CustomerAddressRepoInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::customeraddress" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/totalsubscribercount" method="GET">
+        <service class="Targetbay\Tracking\Api\TotalSubscriberInterface" method="totalsubscribercount"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::totalsubscribercount" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/totalreviewcount" method="GET">
+        <service class="Targetbay\Tracking\Api\TotalReviewInterface" method="totalreviewcount"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::totalreviewcount" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/review" method="GET">
+        <service class="Targetbay\Tracking\Api\ReviewRepoInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::review" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/tbreviewcount" method="GET">
+        <service class="Targetbay\Tracking\Api\TbreviewcountInterface" method="tbreviewcount"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::tbreviewcount" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/subscribers" method="GET">
+        <service class="Targetbay\Tracking\Api\SubscriberRepoInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::subscribers" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/updatesubscription" method="GET">
+        <service class="Targetbay\Tracking\Api\UpdateSubscriptionInterface" method="updatesubscription"/>
+        <resources>
+            <!--resource ref="Targetbay_Tracking::updatesubscription" /-->
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/createsubscription" method="GET">
+        <service class="Targetbay\Tracking\Api\CreateSubscriptionInterface" method="createsubscription"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::createsubscription" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/totalcartitemcount" method="GET">
+        <service class="Targetbay\Tracking\Api\TotalCartItemInterface" method="totalcartitemcount"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::totalcartitemcount" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/cartitems" method="GET">
+        <service class="Targetbay\Tracking\Api\CartItemRepoInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::cartitems" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/totalwishlistcount" method="GET">
+        <service class="Targetbay\Tracking\Api\TotalWishlistInterface" method="totalwishlistcount"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::totalwishlistcount" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/wishlist" method="GET">
+        <service class="Targetbay\Tracking\Api\WishlistRepoInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::wishlist" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/getcoupon" method="GET">
+        <service class="Targetbay\Tracking\Api\GetCouponInterface" method="getList"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::addcoupon" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/createcoupon" method="GET">
+        <service class="Targetbay\Tracking\Api\CreateCouponInterface" method="createcoupon"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::createcoupon" />
+        </resources>
+    </route>
+
+    <route url="/V1/targetbay/updatecoupon" method="GET">
+        <service class="Targetbay\Tracking\Api\UpdateCouponInterface" method="updatecoupon"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::updatecoupon" />
+        </resources>
+    </route>
+
+    <!--route url="/V1/targetbay/updaterewardpoints" method="GET">
+        <service class="Targetbay\Tracking\Api\UpdateRewardPointsInterface" method="save"/>
+        <resources>
+            <resource ref="Targetbay_Tracking::updaterewardpoints" />
+        </resources>
+    </route-->
+</routes>

@@ -1,0 +1,52 @@
+<div id="targetbay_reviews"></div>
+<div id="tb_recommended_products"></div>
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$registry = $objectManager->get('\Magento\Framework\Registry');
+$trackingHelper = $objectManager->get('\Targetbay\Tracking\Helper\Data');
+?>
+<?php $product = $registry->registry('current_product'); ?>
+<?php $richSnippets = $trackingHelper->getRichSnippets(); ?>
+<?php $productSku = $product->getSku(); ?>
+<?php $productName = $product->getName(); ?>
+<?php if (!empty($richSnippets) && $richSnippets['average_score'] > 0): ?>
+    <div id="<?php echo $productSku; ?>" itemprop="aggregateRating" itemscope
+         itemtype="http://schema.org/AggregateRating">
+        <span itemprop="bestRating" content="5"></span>
+        <span itemprop="worstRating" content="1"></span>
+        <span itemprop="ratingValue" content="<?php echo $richSnippets['average_score']; ?>"></span>
+        <span itemprop="reviewCount" content="<?php echo $richSnippets['reviews_count']; ?>"></span>
+        <div itemprop="itemReviewed" itemscope itemtype="http://schema.org/Thing">
+            <span itemprop="name" content="<?php echo $productName; ?>"></span>
+        </div>
+    </div>
+    <?php if ($richSnippets['reviews_count'] > 0): ?>
+        <?php foreach ($richSnippets['reviews'] as $key => $aggregateReviewDetails): ?>
+            <?php $reviewId = $aggregateReviewDetails->_id; ?>
+            <?php $reviewTitle = $aggregateReviewDetails->_source->review_title; ?>
+            <?php $review = $aggregateReviewDetails->_source->review; ?>
+            <?php $timestamp = $aggregateReviewDetails->_source->timestamp; ?>
+            <?php $reviewRating = $aggregateReviewDetails->_source->review_rating; ?>
+            <?php $userName = $aggregateReviewDetails->_source->user_name; ?>
+            <div itemprop="review" id="<?php echo $reviewTitle . '-' . $key; ?>" itemscope
+                 itemtype="http://schema.org/Review" data-reviewid="<?php echo $reviewId; ?>">
+                <span itemprop="name" content="<?php echo $reviewTitle; ?>"></span>
+                <span itemprop="description" content="<?php echo $review; ?>"></span>
+                <span itemprop="datePublished" content="<?php echo date('m/d/Y', $timestamp); ?>"></span>
+                <div itemprop="itemReviewed" itemscope itemtype="http://schema.org/Thing">
+                    <span itemprop="name" content="<?php echo $productName; ?>"></span>
+                </div>
+                <div itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+                    <span itemprop="ratingValue" content="<?php echo $reviewRating; ?>"></span>
+                    <span itemprop="worstRating" content="1"></span>
+                    <span itemprop="bestRating" content="5"></span>
+                </div>
+                <div itemprop="author" itemscope itemtype="http://schema.org/Thing">
+                    <span itemprop="name" content="<?php echo $userName; ?>"></span>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+<?php else: ?>
+    <div id="<?php echo $productSku; ?>"></div>
+<?php endif; ?>
