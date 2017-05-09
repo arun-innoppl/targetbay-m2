@@ -246,7 +246,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getHostname()
     {
-        return self::HOST_LIVE;
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/hostname', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -257,6 +257,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getApiToken()
     {
         return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/api_token', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Get getApiStatus
+     *
+     * @return mixed
+     */
+    public function getApiStatus()
+    {
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/api_status', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -300,16 +310,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * Get getApiStatus
-     *
-     * @return mixed
-     */
-    public function getApiStatus()
-    {
-        return self::API_LIVE;
-    }
-
-    /**
      * Get the Session Tracking Js
      *
      * @return mixed
@@ -323,6 +323,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $reviewSize = 10;
         }
         return $reviewSize;
+    }
+
+    /**
+     * Get TargetBay richsnippet type
+     *
+     * @return mixed
+     */
+    public function getRichsnippetType()
+    {
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/richsnippets_type');
     }
 
     /**
@@ -469,21 +479,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getRefererData()
     {
-        //$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        //$requestInterface = $objectManager->get('Magento\Framework\App\RequestInterface');
-        //$isSecure = $requestInterface->isSecure();
         $domainName = $_SERVER['SERVER_NAME'];
-        /*
-        if ($isSecure) {
-            $currentUrl = $this->_storeManager->getStore()->getUrl('', ['_secure' => true]);
-        } else {
-            $currentUrl = $this->_storeManager->getStore()->getUrl('');
-        }
-        */
         $referrer = $this->_httpHeader->getHttpReferer();
+
         if ($referrer == '' || strpos($referrer, $domainName) !== false) {
             return false; // base url and referrer url matches.
         }
+
         $data = $this->visitInfo();
         $data['referrer_url'] = $referrer;
 
@@ -542,15 +544,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $client->setUri((string)$url);
         $client->setConfig([
             'maxredirects' => 0,
-            'timeout' => 1,
-	        'keepalive' => true
-            //'useragent' => 'Zend_Http_Client',
-            //'httpversion' => 'Http_1.1',
-            //'adapter' => 'Zend_Http_Client_Adapter_Socket',
-            //'adapter' => 'Zend_Http_Client_Adapter_Curl',
-            //'keepalive' => true
-            //'persistent' => true,
-            //'ssltransport' => 'tls'
+            'timeout' => 1
+       
+        ]);
 
       	$client->setMethod('POST');
         $client->setRawData(utf8_encode($jsonData));
@@ -705,7 +701,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if (count($categoryIds)) {
             foreach ($categoryIds as $categoryId) {
                 $_category = $objectManager->get('Magento\Catalog\Model\Category')->load($categoryId);
-                $productCategories[] = $_category->getName();
+                $productCategories[] = str_replace("'", "", $_category->getName());
             }
 
             $categoryName = implode(',', $productCategories);
@@ -1107,6 +1103,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $data ['name'] = $product->getName();
 
         $data ['category'] = $this->getProductCategory($product);
+            
+        // Get product url key
+        if(!empty($product->getUrlKey())) {
+            $urlKey = $product->getUrlKey();
+        } else {
+            $urlKey = $product->getProductUrl();
+        }            
         $data ['url_key'] = $product->getUrlKey();
         $data ['full_url_key'] = $product->getProductUrl();
 
@@ -1454,7 +1457,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getRichSnippets()
     {
-        //$responseData = '';
+        if (!$this->trackingEnabled()) {
+            return false;
+        }
         try {
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
             $registry = $objectManager->get('\Magento\Framework\Registry');
@@ -1462,6 +1467,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $controllerName = $requestInterface->getControllerName();
             $moduleName = $requestInterface->getModuleName();
             $reviewProductId = $this->_coreSession->getProductReviewId();
+            $tbReviewCount = $this->_coreSession->getProductReviewCacheCount();
 
             $data = [];
             $type = self::RATINGS_STATS;
@@ -1471,7 +1477,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             if ($moduleName === 'catalog' && $controllerName === 'product') {
                 $productData = $registry->registry('product');
                 $productId = $productData->getId();
-                //$productId = 104970;
                 $data['product_id'] = $productId;
                 if ($reviewProductId != $productId) {
                     $this->_coreSession->unsProductReviewCount();
@@ -1482,17 +1487,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 }
             }
 
-            if (($productReviewCount < 1 || $productReviewCount === '')) {
+            if ($productReviewCount != $tbReviewCount  || $productReviewCount == '') {
                 $jsonData = json_encode($data);
                 $response = $this->postPageInfo($feedUrl, $jsonData);
                 $responseBody = json_decode($response);
-                if (!empty($responseBody) && $responseBody->reviews_count > 0) {
+
+                if ($responseBody->reviews_count > 0) {
                     $_SESSION['last_session'] = time();
                     $this->_coreSession->setProductReviewCount($responseBody->reviews_count);
                     $this->_coreSession->setProductReviewResponse($responseBody);
                     if (!empty($productId)) {
                         $this->_coreSession->setProductReviewId($productId);
                     }
+                    $this->_coreSession->unsProductReviewCacheCount();
                 }
             } else {
                 $responseBody = $this->_coreSession->getProductReviewResponse();
@@ -1548,34 +1555,45 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getSiteReviewSnippets()
     {
-        $responseData = '';
-        try {
-            //$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            //$registry = $objectManager->get('\Magento\Framework\Registry');
-            //$requestInterface = $objectManager->get('Magento\Framework\App\RequestInterface');
-            //$controllerName = $requestInterface->getControllerName();
-            //$moduleName = $requestInterface->getModuleName();
+        if (!$this->trackingEnabled()) {
+            return false;
+        }
+        try {            
+            $siteReviewCount = $this->_coreSession->getSiteReviewCount();
+            $tbSiteReviewCount = $this->_coreSession->getSiteReviewCacheCount();
+
             $data = [];
             $type = self::RATINGS_STATS;
             $apiToken = '?api_token=' . $this->getApiToken();
             $feedUrl = $this->getHostname() . $type . $apiToken;
             $data['index_name'] = $this->getApiIndex();
 
-            $jsonData = json_encode($data);
-            $response = $this->postPageInfo($feedUrl, $jsonData);
+            if ($siteReviewCount != $tbSiteReviewCount || $siteReviewCount == '') {
+                $jsonData = json_encode($data);
+                $response = $this->postPageInfo($feedUrl, $jsonData);
+                $responseBody = json_decode($response);
 
-            $body = json_decode($response);
-            if (!empty($body)) {
-                $averageScore = $body->reviews_average;
-                $reviewsCount = $body->reviews_count;
-                $reviewsDetails = $body->reviews;
+                if ($responseBody->reviews_count > 0) {
+                    $_SESSION['last_session'] = time();
+                    $this->_coreSession->setSiteReviewCount($responseBody->reviews_count);
+                    $this->_coreSession->setSiteReviewResponse($responseBody);
+                    $this->_coreSession->unsSiteReviewCacheCount();
+                }
+            } else {
+                $responseBody = $this->_coreSession->getProductReviewResponse();
+            }
+            if (!empty($responseBody)) {
+                $averageScore = $responseBody->reviews_average;
+                $reviewsCount = $responseBody->reviews_count;
+                $reviewsDetails = $responseBody->reviews;
                 $responseData = [
                     'average_score' => $averageScore,
                     'reviews_count' => $reviewsCount,
                     'reviews' => $reviewsDetails
                 ];
+
+                return $responseData;
             }
-            return $responseData;
         } catch (\Exception $e) {
             $this->debug('Error :' . $e);
         }
@@ -1590,6 +1608,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getQuestionSnippets()
     {
+        if (!$this->trackingEnabled()) {
+            return false;
+        }
         $responseData = [];
         try {
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
@@ -1597,6 +1618,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $requestInterface = $objectManager->get('Magento\Framework\App\RequestInterface');
             $controllerName = $requestInterface->getControllerName();
             $moduleName = $requestInterface->getModuleName();
+            $reviewProductId = $this->_coreSession->getProductReviewId();
+            $tbQaReviewCount = $this->_coreSession->getQaReviewCacheCount();
 
             $data = [];
             $type = self::QUESTION_STATS;
@@ -1607,15 +1630,35 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $productData = $registry->registry('product');
                 $productId = $productData->getId();
                 $data['product_id'] = $productId;
+                if ($reviewProductId != $productId) {
+                    $this->_coreSession->unsQaReviewCount();
+                    $this->_coreSession->unsQaReviewResponse();
+                    $qaReviewCount = '';
+                } else {
+                    $qaReviewCount = $this->_coreSession->getQaReviewCount();
+                }
             }
+            if ($qaReviewCount != $tbQaReviewCount || $qaReviewCount == '') {
+                $jsonData = json_encode($data);
+                $response = $this->postPageInfo($feedUrl, $jsonData);
+                $responseBody = json_decode($response);
 
-            $jsonData = json_encode($data);
-            $response = $this->postPageInfo($feedUrl, $jsonData);
-            $body = json_decode($response);
-            if (!empty($body)) {
-                $qaCount = $body->qa_count;
-                $qaDetails = $body->qas;
-                $qaAuthor = $body->client;
+                if ($responseBody->qa_count > 0) {
+                    $_SESSION['last_session'] = time();
+                    $this->_coreSession->setQaReview($responseBody->qa_count);
+                    $this->_coreSession->setQaReviewResponse($responseBody);
+                    if (!empty($productId)) {
+                        $this->_coreSession->setProductReviewId($productId);
+                    }
+                    $this->_coreSession->unsQaReviewCacheCount();
+                }
+            } else {
+                $responseBody = $this->_coreSession->getQaReviewResponse();
+            }
+            if (!empty($responseBody)) {
+                $qaCount = $responseBody->qa_count;
+                $qaDetails = $responseBody->qas;
+                $qaAuthor = $responseBody->client;
                 $responseData = [
                     'qa_count' => $qaCount,
                     'qa_details' => $qaDetails,
@@ -1623,8 +1666,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 ];
                 return $responseData;
             }
-
-            return $responseData;
         } catch (\Exception $e) {
             $this->debug('Error :' . $e);
         }

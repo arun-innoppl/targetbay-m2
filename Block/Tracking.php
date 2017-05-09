@@ -5,16 +5,16 @@ namespace Targetbay\Tracking\Block;
 class Tracking extends \Magento\Framework\View\Element\Template
 {
     protected $trackingHelper;
-    //protected $request;
     protected $registry;
     protected $customerSession;
     protected $cookieManager;
+    protected $checkoutSession;
 
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-       // \Magento\Framework\App\RequestInterface $request,
         \Magento\Framework\Registry $registry,
         \Magento\Customer\Model\Session $customerSession,
+        \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Targetbay\Tracking\Helper\Data $trackingHelper
     ) {
@@ -22,9 +22,9 @@ class Tracking extends \Magento\Framework\View\Element\Template
         $this->_isScopePrivate = true;
         $this->trackingHelper = $trackingHelper;
         $this->cookieManager = $cookieManager;
-       // $this->request = $request;
         $this->registry = $registry;
         $this->customerSession = $customerSession;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -68,5 +68,17 @@ class Tracking extends \Magento\Framework\View\Element\Template
             $userInfo['user_name'] = $visitorName;
         }
         return $userInfo;
+    }
+
+    public function getOrderId()
+    {   
+        $htmlTag = '';        
+        $moduleName = $this->getRequest()->getModuleName();
+        $actionName = $this->getRequest()->getActionName();
+        if ($moduleName == 'checkout' && $actionName == 'success') {
+            $lastOrderId = $this->checkoutSession->getLastOrderId();
+            $htmlTag = '<div id="targetbay_order_reviews"></div>';
+        }
+        return $htmlTag;
     }
 }

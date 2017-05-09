@@ -12,6 +12,7 @@ class Reload extends \Magento\Framework\App\Action\Action
     private $cart;
     private $coreSession;
     private $context;
+    private $productFactory;
 
     /**
      * @param Magento\Framework\App\Action\Context $context
@@ -22,6 +23,7 @@ class Reload extends \Magento\Framework\App\Action\Action
     public function __construct(Context $context,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Checkout\Model\Cart $cart,
+        \Magento\Catalog\Model\Product $productFactory,
         \Magento\Framework\Session\SessionManagerInterface $coreSession
     ) {
         parent::__construct($context);
@@ -29,6 +31,7 @@ class Reload extends \Magento\Framework\App\Action\Action
         $this->customerSession = $customerSession;
         $this->coreSession = $coreSession;
         $this->cart = $cart;
+        $this->productFactory = $productFactory;
     }
 
     /**
@@ -76,14 +79,20 @@ class Reload extends \Magento\Framework\App\Action\Action
             $quote = $objectManager->get('Magento\Quote\Model\Quote')->load($quoteId);
 
             $quoteItems = $quote->getAllVisibleItems();
-
+            $i=0;
             foreach ($quoteItems as $key => $item) {
-                $itemData['itemQty'] = $item->getQty();
-                $itemData['itemProductId'] = $item->getProductId();
-                $itemQty[$item->getProductId()] = $item->getQty();
-                $itemIds[$item->getProductId()] = $item->getId();
-                $prodId[] = $item->getProductId();
-                $this->cart->addProduct($item->getProductId(), ['qty' => $item->getQty()]);
+                $product = $this->productFactory->load($item->getProductId());
+                if ($item->getProductType() == 'configurable') {
+                    $customOptions = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+                    $superAttributeInfo = $customOptions['info_buyRequest'];
+
+                    $params = array('qty' => $quoteItems[$i]['qty'], 'super_attribute' => $superAttributeInfo['super_attribute']);
+                    $this->cart->addProduct($product, $params);
+                } else {
+                    $params = array('qty' => $quoteItems[$i]['qty']);
+                    $this->cart->addProduct($product, $params);
+                }
+                $i++;
             }
             $this->cart->save();
         } catch (\Exception $e) {

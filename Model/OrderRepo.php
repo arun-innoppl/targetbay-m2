@@ -17,6 +17,7 @@ class OrderRepo implements OrderRepoInterface
 {
     const BILLING = 'billing';
     const SHIPPING = 'shipping';
+    const ORDER_COMPLETE = 'complete';
 
     /**
      * @var \Targetbay\Tracking\Helper\Data $_trackingHelper
@@ -24,12 +25,20 @@ class OrderRepo implements OrderRepoInterface
     protected $_trackingHelper;
 
     /**
-     * @param \Targetbay\Tracking\Helper\Data $trackingHelper
+     * @var \Magento\Directory\Api\CountryInformationAcquirerInterface $_countryInformation
+     */
+    protected $_countryInformation;
+
+    /**
+     * @param \Targetbay\Tracking\Helper\Data $_trackingHelper
+     * @param \Magento\Directory\Api\CountryInformationAcquirerInterface $_countryInformation
      */
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $trackingHelper
+        \Magento\Directory\Api\CountryInformationAcquirerInterface $_countryInformation,
+        \Targetbay\Tracking\Helper\Data $_trackingHelper
     ) {
-        $this->_trackingHelper = $trackingHelper;
+        $this->_trackingHelper = $_trackingHelper;
+        $this->_countryInformation = $_countryInformation;
     }
 
     /**
@@ -53,24 +62,51 @@ class OrderRepo implements OrderRepoInterface
 
         foreach ($collection->getItems() as $order) {
             $ordersData [$order->getId()] = $order->toArray();
-            $ordersData [$order->getId()] [self::BILLING] = $this->_trackingHelper->getAddressData($order, self::BILLING);
+            $ordersData [$order->getId()] [self::BILLING] = $this->getUserAddressData($order, self::BILLING);
             if ($order->getShippingAddress()) {
-                $ordersData [$order->getId()] [self::SHIPPING] = $this->_trackingHelper->getAddressData($order, self::SHIPPING);
+                $ordersData [$order->getId()] [self::SHIPPING] = $this->getUserAddressData($order, self::SHIPPING);
                 if ($order->getStatus() == self::ORDER_COMPLETE) {
                     //order shipped date
                     foreach ($order->getShipmentsCollection() as $shipment) {
                         /** @var $shipment Mage_Sales_Model_Order_Shipment */
-                        $shipmentDate = $dateFormat->timestamp(strtotime($shipment->getCreatedAt()));
-                        $ordersData[$order->getId()]['shipped_at'] = date('F j, Y g:i a',strtotime($actualDate." UTC"));
+                        $ordersData[$order->getId()]['shipped_at'] = $shipment->getCreatedAt();
                         $ordersData[$order->getId()]['timezone'] = $timezone;
                     }
                 }
             } else {
-                $ordersData [$order->getId()] [self::SHIPPING] = '';
+                $ordersData[$order->getId()][self::SHIPPING] = '';
             }
+            $ordersData [$order->getId()]['payment_method'] = $order->getPayment()->getMethodInstance()->getTitle();
             $ordersData [$order->getId()] ['cart_items'] = $this->_trackingHelper->getOrderItemsInfo($order, true);
         }
 
         return $ordersData;
+    }
+
+    public function getUserAddressData($object, $type)
+    {
+        $address = ($type === self::SHIPPING) ? $object->getShippingAddress() : $object->getBillingAddress();
+        $addressData['first_name'] = $address->getFirstname();
+        $addressData['last_name'] = $address->getLastname();
+        $guestUsername = $address->getFirstname() . ' ' . $address->getLastname();
+        $gName = !empty($guestUsername) ? $guestUsername : self::ANONYMOUS_USER;
+        $addressData['user_name'] = $object->getCustomerIsGuest() ? $gName : $addressData['first_name'] . ' ' . $addressData['last_name'];
+        $addressData['order_id'] = $object->getId();
+        $addressData['user_mail'] = $object->getCustomerEmail();
+        $addressData['address1'] = $address->getStreet(1);
+        $addressData['address2'] = $address->getStreet(2);
+        $addressData['city'] = $address->getCity();
+        $addressData['state'] = $address->getRegion();
+        $addressData['zipcode'] = $address->getPostcode();
+
+        $countryName = '';
+        if ($address->getCountryId()) {
+            $countryName = $this->_countryInformation->getCountryInfo($address->getCountryId())->getFullNameLocale();
+        }
+
+        $addressData['country'] = $countryName !== '' ? $countryName : $address->getCountryId();
+        $addressData['phone'] = $address->getTelephone();
+
+        return $addressData;
     }
 }

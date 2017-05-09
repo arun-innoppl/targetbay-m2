@@ -4,10 +4,10 @@ namespace Targetbay\Tracking\Model\System\Config\Source;
 
 use Magento\Framework\Option\ArrayInterface;
 
-class Status implements ArrayInterface
+class Snippetstatus implements ArrayInterface
 {
     /**
-     * Magento version configurations
+     * Structured data option configuration
      *
      * @return array
      */
@@ -15,16 +15,16 @@ class Status implements ArrayInterface
     {
         return [
             [
-                'value' => 'dev',
-                'label' => __('Development')
+                'value' => '',
+                'label' => __('Please Select')
             ],
             [
-                'value' => 'stage',
-                'label' => __('Stage')
+                'value' => 0,
+                'label' => __('Disable')
             ],
             [
-                'value' => 'app',
-                'label' => __('Production')
+                'value' => 1,
+                'label' => __('Automatic')
             ]
         ];
     }

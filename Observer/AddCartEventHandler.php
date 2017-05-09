@@ -66,7 +66,7 @@ class AddCartEventHandler implements ObserverInterface
 
         $data['price'] = $item->getProduct()->getFinalPrice();
 
-        if ($customOptions = $this->_trackingHelper->getCustomOptionsInfo($item, null)) {
+        if($customOptions = $this->_trackingHelper->getCustomOptionsInfo($item, null)) {
             $data['attributes'] = $customOptions;
         }
         $this->pushPages($data, self::ADD_TO_CART);

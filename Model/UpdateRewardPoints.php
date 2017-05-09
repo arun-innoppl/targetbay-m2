@@ -37,18 +37,18 @@ class UpdateRewardPoints implements UpdateRewardPointsInterface
      *
      * @var \Magento\Reward\Helper\Data
      */
-    protected $_rewardData;
+    //protected $_rewardData;
 
     public function __construct(
-        \Magento\Reward\Helper\Data $_rewardData,
         \Magento\Framework\App\RequestInterface $_request,
         \Targetbay\Tracking\Helper\Data $_trackingHelper,
         \Magento\Store\Model\StoreManagerInterface $_storeManager
+        //Magento\Reward\Helper\Data $_rewardData
     ) {
         $this->_request = $_request;
         $this->_trackingHelper = $_trackingHelper;
         $this->_storeManager = $_storeManager;
-        $this->_rewardData = $_rewardData;
+        //$this->_rewardData = $_rewardData;
     }
 
     /**
@@ -64,11 +64,11 @@ class UpdateRewardPoints implements UpdateRewardPointsInterface
         $customerData = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
         $storeId = $this->getStoreId();
         $websiteId = $this->_storeManager->getStore($storeId)->getWebsiteId();
-        if (!$this->_rewardData->isEnabledOnFront($websiteId)) {
-            return false;
-        }
+        //if (!$this->_rewardData->isEnabledOnFront($websiteId)) {
+          //  return false;
+        //}
 
-        $rewardFactory = $objectManager->create('Magento\Reward\Model\Reward');
+        /*$rewardFactory = $objectManager->create('Magento\Reward\Model\Reward');
 
         if (null !== $customerData) {
             $rewardFactory->setCustomerId($customerId)
@@ -76,7 +76,7 @@ class UpdateRewardPoints implements UpdateRewardPointsInterface
                 ->setAction(self::REWARD_ACTION_REVIEW)
                 ->updateRewardPoints();
             return true;
-        }
+        }*/
 
         return false;
     }

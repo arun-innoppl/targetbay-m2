@@ -18,6 +18,7 @@ class ListProducts implements ListProductInterface
     // Product type configurable.
     const CONFIGURABLE_PRODUCT = 'configurable';
     const BUNDLE_PRODUCT = 'bundle';
+    const GROUPED_PRODUCT = 'grouped';
 
     /**
      * Get the Products with pagination
@@ -42,6 +43,10 @@ class ListProducts implements ListProductInterface
         $products = $collection->load()->toArray();
 
         foreach ($products as $id => $data) {
+            /**
+             *
+             * @var $category Get product categories
+             */
             $product = $productFactory->create()->load($id);
             $categoryIds = $product->getCategoryIds();
 
@@ -50,7 +55,8 @@ class ListProducts implements ListProductInterface
             } else {
                 $imageUrl = '';
             }
-
+            
+            // Get product url key
             if(!empty($product->getUrlKey())) {
                 $urlKey = $product->getUrlKey();
             } else {
@@ -70,13 +76,15 @@ class ListProducts implements ListProductInterface
             $products[$id]['price'] = $product->getFinalPrice();
             $products[$id]['special_price'] = $product->getSpecialPrice();
 
-            /**
-             *
-             * @var $category Get product categories
-             */
+            if(count($product->getRelatedProductIds()) > 0) {
             $products[$id]['related_product_id'] = implode(',', $product->getRelatedProductIds());
+            }
+            if(count($product->getUpSellProductIds()) > 0) {
             $products[$id]['upsell_product_id'] = implode(',', $product->getUpSellProductIds());
-            $products[$id]['crosssell_product_id'] = implode(',', $product->getCrossSellProducts());
+            }
+            if(count($product->getCrossSellProductIds()) > 0) {
+            $products[$id]['crosssell_product_id'] = implode(',', $product->getCrossSellProductIds());
+            }
 
             $configOptions = [];
             $customOptions = [];
@@ -96,7 +104,7 @@ class ListProducts implements ListProductInterface
                     }
                     $products[$id]['child_items'] = $childProductData;
                     $products[$id]['parent_id'] = $product->getId();
-                    break;
+                break;
                 case self::BUNDLE_PRODUCT:
                     $collection = $product->getTypeInstance(true)
                         ->getSelectionsCollection($product->getTypeInstance(true)->getOptionsIds($product), $product);
@@ -109,7 +117,19 @@ class ListProducts implements ListProductInterface
                     }
                     $products[$id]['child_items'] = $childProductData;
                     $products[$id]['parent_id'] = $product->getId();
-                    break;
+                break;
+                case self::GROUPED_PRODUCT:
+                    $collection = $product->getTypeInstance(true)->getAssociatedProducts($product);
+
+                    foreach ($collection as $item) {
+                        $childProductId = $item->getId();
+                        $childProductDetails = $productFactory->create()->load($item->getId());
+                        $childProductData[$childProductId] = $trackingHelper->getProductData($childProductDetails);
+                        $childProductData[$childProductId]['parent_id'] = $product->getId();
+                    }
+                    $products[$id]['child_items'] = $childProductData;
+                    $products[$id]['parent_id'] = $product->getId();
+                break;
             }
 
             if ($custOptions = $productFactory->create()->load($product->getId())->getOptions()) {

@@ -13,5 +13,10 @@
                 </arguments>
             </block>
         </referenceBlock>
+        <referenceBlock name="content">
+            <block class="Targetbay\Tracking\Block\Product\Richsnippets" name="tracking-product-richsnippets"
+                   as="tracking-product-richsnippets" after="product.info">
+            </block>
+        </referenceBlock>
     </body>
 </page>

@@ -18,15 +18,28 @@
                         Enable or disable the tracking module.
                     </comment>
                 </field>
+                <field id="hostname" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Hostname</label>
+                </field>
                 <field id="api_token" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Api Token</label>
                 </field>
                 <field id="api_index" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Api Index</label>
                 </field>
-                <field id="page_types" translate="label" type="multiselect" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="api_status" translate="label" type="select" sortOrder="145" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Api Status</label>
+                    <source_model>Targetbay\Tracking\Model\System\Config\Source\Status</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="page_types" translate="label" type="multiselect" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Select Page Types</label>
                     <source_model>Targetbay\Tracking\Model\System\Config\Source\Page</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="richsnippets_type" translate="label" type="select" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Select Richsnippets Type</label>
+                    <source_model>Targetbay\Tracking\Model\System\Config\Source\Snippetstatus</source_model>
                     <can_be_empty>1</can_be_empty>
                 </field>
                 <field id="tracking_script" translate="label" type="textarea" sortOrder="165" showInDefault="1" showInWebsite="1" showInStore="1">

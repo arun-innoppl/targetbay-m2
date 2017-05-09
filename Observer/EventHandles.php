@@ -81,6 +81,10 @@ class EventHandles implements ObserverInterface
             if ($secondsInactive > $expireAfterSeconds) {
                 $coreSession->unsProductReviewCount();
                 $coreSession->unsProductReviewResponse();
+                $coreSession->unsSiteReviewCount();
+                $coreSession->unsSiteReviewResponse();
+                $coreSession->unsQaReviewCount();
+                $coreSession->unsQaReviewResponse();
                 $coreSession->unsProductReviewId();
             }
         }
@@ -115,18 +119,16 @@ class EventHandles implements ObserverInterface
             $customerEmail = $customer->getEmail();
             $this->_cookieManager->setPublicCookie('user_loggedin', true, $metadata);
             $this->_cookieManager->setPublicCookie('afterlogin_session_id', $coreSession->getCustomerSessionId(), $metadata);
-	    $this->_cookieManager->setPublicCookie('trackingid', $customerId, $metadata);
+            $this->_cookieManager->setPublicCookie('trackingid', $customerId, $metadata);
         } else {
             if (!empty($this->_request->getParam('guest_user_id'))) {
                 $customerId = $coreSession->getTrackingSessionId();
             } elseif (empty($this->_cookieManager->getCookie('trackingid'))) {
                 $customerId = $coreSession->getTrackingSessionId();
             }
-            empty($customerId) ? '' : $this->_cookieManager->setPublicCookie('trackingid', $customerId, $metadata);
             $this->_cookieManager->setPublicCookie('user_loggedin', false, $metadata);
         }
-
-        //empty($customerId) ? '' : $this->_cookieManager->setPublicCookie('trackingid', $customerId, $metadata);
+        !empty($customerId) ? $this->_cookieManager->setPublicCookie('trackingid', $customerId, $metadata) : '';
 
         $this->_cookieManager->setPublicCookie('trackingemail', $customerEmail, $metadata);
         $this->_cookieManager->setPublicCookie('trackingname', $customerName, $metadata);

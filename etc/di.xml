@@ -30,7 +30,7 @@
 	<preference for="Targetbay\Tracking\Api\GetCouponInterface" type="Targetbay\Tracking\Model\GetCouponRepo" />
 	<preference for="Targetbay\Tracking\Api\CreateCouponInterface" type="Targetbay\Tracking\Model\CreateCouponRepo" />
 	<preference for="Targetbay\Tracking\Api\UpdateCouponInterface" type="Targetbay\Tracking\Model\UpdateCouponRepo" />
-	<preference for="Targetbay\Tracking\Api\UpdateRewardPointsInterface" type="Targetbay\Tracking\Model\UpdateRewardPoints" />
+	<!--preference for="Targetbay\Tracking\Api\UpdateRewardPointsInterface" type="Targetbay\Tracking\Model\UpdateRewardPoints" /-->
 	<preference for="Magento\Customer\Model\EmailNotification" type="Targetbay\Tracking\Model\Customer\EmailNotification" />
 	<preference for="Magento\Newsletter\Model\Subscriber" type="Targetbay\Tracking\Model\Customer\Subscriber" />
 </config>

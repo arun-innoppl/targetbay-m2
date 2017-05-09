@@ -7,13 +7,14 @@
 ?>
 <?php
 /**
- * Product list template
+ * Tracking template
  *
- * @var $block \Magento\Targetbay\Block\Tracking\Tracking
+ * @var $block \Targetbay\Tracking\Block\Tracking
  */
 ?>
 <?php
-$trackingHelper = $this->helper('Targetbay\Tracking\Helper\Data');
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$trackingHelper = $objectManager->get('Targetbay\Tracking\Helper\Data');
 
 $_productInfo = $block->getProductInfo();
 $_userInfo = $block->getUserInfo();
@@ -34,8 +35,6 @@ if (isset($_userInfo)) {
     $_userEmail = $_userInfo['user_email'] ? $_userInfo['user_email'] : '';
     $_userName = $_userInfo['user_name'] ? $_userInfo['user_name'] : $visitorName;
 }
-
-$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 $requestInterface = $objectManager->get('Magento\Framework\App\RequestInterface');
 $controllerName = $requestInterface->getControllerName();
 if ($controllerName == "product") {
@@ -59,7 +58,7 @@ if ($trackingEnabled) :
         $trackingCode = 'tbTrack: true,
 			 tbMessage: true,
 			 tbReview: {
-				tbSiteReview: false,	
+				tbSiteReview: true,	
 				tbProductReview: true,
 				tbBulkReview: true,
 				tbQa: true
@@ -69,6 +68,7 @@ if ($trackingEnabled) :
 
     <div id="targetbay_message"></div>
     <div id="targetbay_site_reviews"></div>
+    <?php echo $block->getOrderId();?>
     <script type="text/javascript">
         tbConfig = {
             apiStatus: '<?php echo $apiStatus;?>',
@@ -104,4 +104,39 @@ if ($trackingEnabled) :
             'track'
         ], tbConfig);
     </script>
+<?php endif; ?>
+<?php $siteReviewSnippets = $trackingHelper->getSiteReviewSnippets();?>
+<?php if (!empty($siteReviewSnippets) && $siteReviewSnippets['average_score'] > 0): ?>
+<div itemscope itemtype="http://schema.org/Organization">
+    <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+        <span itemprop="bestRating" content="5"></span> 
+        <span itemprop="ratingValue" content="<?php echo $siteReviewSnippets['average_score']; ?>"></span> 
+        <span itemprop="reviewCount" content="<?php echo $siteReviewSnippets['reviews_count']; ?>"></span>
+        <span itemprop="ratingCount" content="<?php echo $siteReviewSnippets['reviews_count']; ?>"></span>
+    </div>
+    <?php if ($siteReviewSnippets['reviews_count'] > 0):  ?> 
+    <?php foreach ($siteReviewSnippets['reviews']  as $key => $aggregateReviewDetails): ?>
+        <?php $reviewId = $aggregateReviewDetails->_id; ?>
+        <?php $reviewTitle = $aggregateReviewDetails->_source->title; ?>
+        <?php $review = $aggregateReviewDetails->_source->message; ?>
+        <?php $timestamp = $aggregateReviewDetails->_source->timestamp; ?>
+        <?php $reviewRating = $aggregateReviewDetails->_source->review_rating; ?>
+        <?php $userName = $aggregateReviewDetails->_source->user_name; ?>
+
+        <div itemprop="review" id="<?php echo $block->escapeHtml($reviewTitle) . '-' . $key; ?>" itemscope itemtype="http://schema.org/Review" data-reviewid="<?php echo $reviewId; ?>">
+            <span itemprop="name" content="<?php echo $block->escapeHtml($reviewTitle); ?>"></span> 
+            <span itemprop="description" content="<?php echo $block->escapeHtml($review); ?>"></span> 
+            <span itemprop="datePublished" content="<?php echo date('m/d/Y', $timestamp); ?>"></span>
+            <div itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+                <span itemprop="ratingValue" content="<?php echo $reviewRating; ?>"></span>
+                <span itemprop="worstRating" content="1"></span>
+                <span itemprop="bestRating" content="5"></span>
+            </div>
+            <div itemprop="author" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="name" content="<?php echo $userName; ?>"></span>
+            </div>
+        </div>
+    <?php  endforeach; ?>
+    <?php endif; ?>
+</div>
 <?php endif; ?>
