@@ -16,22 +16,22 @@ class CmsEventHandles implements ObserverInterface
     const PAGE_VISIT = 'page-visit';
     const PAGE_REFERRAL = 'referrer';
 
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     /**
-     * @var \Targetbay\Tracking\Helper\Data $_trackingHelper
+     * @var \Targetbay\Tracking\Helper\Data $trackingHelper
      */
-    protected $_trackingHelper;
+    protected $trackingHelper;
 
     /**
-     * @param \Targetbay\Tracking\Helper\Data $_trackingHelper
+     * @param \Targetbay\Tracking\Helper\Data $trackingHelper
      */
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper
+        \Targetbay\Tracking\Helper\Data $trackingHelper
     ) {
-        $this->_trackingHelper  = $_trackingHelper;
+        $this->_trackingHelper  = $trackingHelper;
         $this->_apiToken        = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName       = $this->_trackingHelper->getApiIndex();
         $this->_tbHost   = $this->_trackingHelper->getHostname();

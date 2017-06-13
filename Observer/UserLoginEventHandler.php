@@ -6,21 +6,17 @@ use Magento\Framework\Event\ObserverInterface;
 
 class UserLoginEventHandler implements ObserverInterface
 {
-    //const ANONYMOUS_USER = 'anonymous';
-    //const ALL_PAGES = 'all';
-    //const PAGE_VISIT = 'page-visit';
-    //const PAGE_REFERRAL = 'referrer';
     const LOGIN = 'login';
 
-    protected $_trackingHelper;
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    public $trackingHelper;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper
+        \Targetbay\Tracking\Helper\Data $trackingHelper
     ) {
-        $this->_trackingHelper = $_trackingHelper;
+        $this->_trackingHelper = $trackingHelper;
         $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName = $this->_trackingHelper->getApiIndex();
         $this->_tbHost = $this->_trackingHelper->getHostname();

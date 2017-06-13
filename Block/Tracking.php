@@ -2,29 +2,38 @@
 
 namespace Targetbay\Tracking\Block;
 
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
+
 class Tracking extends \Magento\Framework\View\Element\Template
 {
-    protected $trackingHelper;
-    protected $registry;
-    protected $customerSession;
-    protected $cookieManager;
-    protected $checkoutSession;
+    public $trackingHelper;
+    public $trackingInventaryHelper;
+    public $registry;
+    public $customerSession;
+    public $cookieManager;
+    public $checkoutSession;
+    public $stockItemRepository;
 
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Customer\Model\Session $customerSession,
-        \Magento\Checkout\Model\Session $checkoutSession,
+        CustomerSession $customerSession,
+        CheckoutSession $checkoutSession,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
-        \Targetbay\Tracking\Helper\Data $trackingHelper
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Targetbay\Tracking\Helper\Inventary $trackingInventaryHelper,
+        \Magento\CatalogInventory\Model\Stock\StockItemRepository $stockItemRepository
     ) {
         parent::__construct($context);
         $this->_isScopePrivate = true;
         $this->trackingHelper = $trackingHelper;
+        $this->trackingInventaryHelper = $trackingInventaryHelper;
         $this->cookieManager = $cookieManager;
         $this->registry = $registry;
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
+        $this->stockItemRepository = $stockItemRepository;
     }
 
     /**
@@ -67,6 +76,7 @@ class Tracking extends \Magento\Framework\View\Element\Template
             $userInfo['user_email'] = '';
             $userInfo['user_name'] = $visitorName;
         }
+
         return $userInfo;
     }
 
@@ -80,5 +90,44 @@ class Tracking extends \Magento\Framework\View\Element\Template
             $htmlTag = '<div id="targetbay_order_reviews"></div>';
         }
         return $htmlTag;
+    }
+
+    public function getProduct()
+    {
+        return $this->registry->registry('current_product');
+    }
+
+    public function getProductStockInfo()
+    {
+        $_product = $this->getProduct();
+        $controllername = $this->getRequest()->getControllerName();
+        $modulename = $this->getRequest()->getModuleName();
+        if($modulename == 'catalog' && $controllername == 'product') {
+            if($this->trackingInventaryHelper->getInventryStatus() == 1) {
+                return $this->trackingInventaryHelper->getProductInfo();
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    public function getStockAvaliability()
+    {
+        $_product = $this->getProduct();
+        $controllername = $this->getRequest()->getControllerName();
+        $modulename = $this->getRequest()->getModuleName();
+        $backorderStatus = $this->trackingHelper->getBackorderStatus();
+        if($modulename == 'catalog' && $controllername == 'product' && $backorderStatus == 1) {
+            return $this->trackingInventaryHelper->getInventryStatus();
+        } else {
+            return 0;
+        }
+    }
+
+    public function getStockItem($productId)
+    {
+        return $this->stockItemRepository->get($productId);
     }
 }

@@ -3,31 +3,28 @@
 namespace Targetbay\Tracking\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Customer\Model\Session as CustomerSession;
 
 class UpdateWishlistEventHandler implements ObserverInterface
 {
-    //const ANONYMOUS_USER = 'anonymous';
-    //const ALL_PAGES = 'all';
-    //const PAGE_VISIT = 'page-visit';
-    //const PAGE_REFERRAL = 'referrer';
     const UPDATE_WISHLIST = 'update-wishlist';
 
-    protected $_request;
-    protected $_trackingHelper;
-    protected $_customerSession;
+    public $request;
+    public $trackingHelper;
+    public $customerSession;
 
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Framework\App\RequestInterface $_request,
-        \Magento\Customer\Model\Session $_customerSession
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Framework\App\RequestInterface $request,
+        CustomerSession $customerSession
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_request = $_request;
-        $this->_customerSession = $_customerSession;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_request = $request;
+        $this->_customerSession = $customerSession;
 
         $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName = $this->_trackingHelper->getApiIndex();

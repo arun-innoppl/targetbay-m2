@@ -9,9 +9,9 @@
 <div id="tb_recommended_products"></div>
 
 <?php $questionSnippets = $block->getQuestionReview(); ?>
-<?php if (!empty($questionSnippets) && $questionSnippets['qa_count'] > 0): ?>
+<?php if (!empty($questionSnippets) && $questionSnippets['qa_count'] > 0) : ?>
     <?php $authorName = $questionSnippets['qa_author']; ?>
-    <?php foreach ($questionSnippets['qa_details']  as $key => $qasDetails): ?>
+    <?php foreach ($questionSnippets['qa_details'] as $key => $qasDetails) : ?>
         <?php $productName = $qasDetails->_source->product_name; ?>
         <?php $questionName = $qasDetails->_source->questions; ?>
         <?php $qasCreatedDate = $qasDetails->_source->timestamp; ?>
@@ -19,34 +19,36 @@
         <?php $answerArray = $qasDetails->_source->question_answers; ?>
         <?php $qasId = $qasDetails->_id; ?>
         <?php $i = 1; ?>
-        <div id="<?php echo $block->escapeHtml($questionName) . '-' . $key; ?>" itemscope itemtype="http://schema.org/Question">
-
+        <div id="<?php echo $block->escapeHtml($questionName) . '-' . $key; ?>" 
+                itemscope itemtype="http://schema.org/Question">
             <span itemprop="name" content="<?php echo $block->escapeHtml($productName); ?>"></span>
             <span itemprop="text" content="<?php echo $block->escapeHtml($questionName); ?>"></span>
-            <span itemprop="dateCreated" content="<?php echo date('m/d/Y', $qasCreatedDate); ?>"></span>
+            <span itemprop="dateCreated" content="<?php echo date('Y-m-d', $qasCreatedDate); ?>"></span>
             <span itemprop="author" itemscope itemtype="http://schema.org/Person">
                 <span itemprop="name" content="<?php echo $qasUsername; ?>"></span>
             </span>
-            <?php if(count($answerArray) > 0): ?>
+            <?php if (count($answerArray) > 0) : ?>
             <span itemprop="answerCount" content="<?php echo count($answerArray); ?>"></span>
-            <span itemprop="acceptedAnswer" itemscope itemtype="http://schema.org/Answer" id="<?php echo $qasId . '-0'; ?>">
+            <span itemprop="acceptedAnswer" itemscope itemtype="http://schema.org/Answer" 
+                    id="<?php echo $qasId . '-0'; ?>">
                 <span itemprop="upvoteCount" content="<?php echo $answerArray[0]->upvotes; ?>"></span>
                 <span itemprop="text" content="<?php echo $block->escapeHtml($answerArray[0]->answers); ?>"></span>
-                <span itemprop="dateCreated" content="<?php echo date('m/d/Y', $answerArray[0]->answer_timestamp); ?>"></span>
+                <span itemprop="dateCreated" content="<?php echo date('Y-m-d', $answerArray[0]->answer_timestamp); ?>"></span>
                 <span itemprop="author" itemscope itemtype="http://schema.org/Person">
                     <span itemprop="name" content="<?php echo $authorName; ?>"></span>
                 </span>
             </span>
-            <?php foreach ($answerArray  as $key => $answers): ?>
+            <?php foreach ($answerArray as $key => $answers) : ?>
             <span itemprop="suggestedAnswer" itemscope itemtype="http://schema.org/Answer" id="<?php echo $qasId . '-' . $i; ?>">
                 <span itemprop="upvoteCount" content="<?php echo $answers->upvotes; ?>"></span>
                 <span itemprop="text" content="<?php echo $block->escapeHtml($answers->answers); ?>"></span>
-                <span itemprop="dateCreated" content="<?php echo date('m/d/Y', $answers->answer_timestamp); ?>"></span>
+                <span itemprop="dateCreated" content="<?php echo date('Y-m-d', $answers->answer_timestamp); ?>"></span>
                 <span itemprop="author" itemscope itemtype="http://schema.org/Person">
                     <span itemprop="name" content="<?php echo $authorName; ?>"></span>
                 </span>
             </span>
-            <?php $i++; endforeach; ?>
+            <?php $i++; ?>
+            <?php endforeach; ?>
             <?php endif; ?>
         </div>
     <?php endforeach; ?>

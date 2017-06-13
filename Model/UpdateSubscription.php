@@ -17,42 +17,42 @@ class UpdateSubscription implements UpdateSubscriptionInterface
 {
 
     /**
-     * @var \Magento\Framework\App\RequestInterface $_request
+     * @var \Magento\Framework\App\RequestInterface $request
      */
-    protected $_request;
+    public $request;
 
     /**
-     * @var \Targetbay\Tracking\Helper\Data $_trackingHelper
+     * @var \Targetbay\Tracking\Helper\Data $trackingHelper
      */
-    protected $_trackingHelper;
+    public $trackingHelper;
 
     /**
-     * @var \Magento\Customer\Api\CustomerRepositoryInterface $_customerRepository
+     * @var \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
      */
-    protected $_customerRepository;
+    public $customerRepository;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface $_storeManager
+     * @var \Magento\Store\Model\StoreManagerInterface $storeManager
      */
-    protected $_storeManager;
+    public $storeManager;
 
     /**
-     * @var \Magento\Newsletter\Model\SubscriberFactory $_subscriberFactory
+     * @var \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory
      */
-    protected $_subscriberFactory;
+    public $subscriberFactory;
 
     public function __construct(
-        \Magento\Framework\App\RequestInterface $_request,
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Store\Model\StoreManagerInterface $_storeManager,
-        \Magento\Customer\Api\CustomerRepositoryInterface $_customerRepository,
-        \Magento\Newsletter\Model\SubscriberFactory $_subscriberFactory
+        \Magento\Framework\App\RequestInterface $request,
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
+        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory
     ) {
-        $this->_request = $_request;
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_storeManager = $_storeManager;
-        $this->_customerRepository = $_customerRepository;
-        $this->_subscriberFactory = $_subscriberFactory;
+        $this->_request = $request;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_storeManager = $storeManager;
+        $this->_customerRepository = $customerRepository;
+        $this->_subscriberFactory = $subscriberFactory;
     }
 
     /**

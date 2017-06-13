@@ -8,12 +8,12 @@ class CartEventHandler implements ObserverInterface
 {
     const CHECKOUT = 'checkout-cart';
 
-    protected $_coreSession;
+    public $coreSession;
 
     public function __construct(
-        \Magento\Framework\Session\Generic $_coreSession
+        \Magento\Framework\Session\Generic $coreSession
     ) {
-        $this->_coreSession = $_coreSession;
+        $this->_coreSession = $coreSession;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)

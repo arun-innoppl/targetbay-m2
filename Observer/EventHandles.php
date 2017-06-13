@@ -3,6 +3,8 @@
 namespace Targetbay\Tracking\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
 
 /**
  * Class EventHandles
@@ -16,54 +18,53 @@ class EventHandles implements ObserverInterface
     const ANONYMOUS_USER = 'anonymous';
     const TIMEOUT = 900;
 
-    private $_apiToken;
-    private $_indexName;
-    private $_targetbayHost;
-    protected $_request;
+    private $apiToken;
+    private $indexName;
+    private $targetbayHost;
+    public $request;
 
     /**
-     * @var \Targetbay\Tracking\Helper\Data $_trackingHelper
+     * @var \Targetbay\Tracking\Helper\Data $trackingHelper
      */
-    protected $_trackingHelper;
+    public $trackingHelper;
 
     /**
      * @var \Magento\Framework\Stdlib\CookieManagerInterface
      */
-    protected $_cookieManager;
+    public $cookieManager;
 
     /**
      * @var \Magento\Customer\Model\Session
      */
-    protected $_customerSession;
+    public $customerSession;
 
     /**
      * @var \Magento\Checkout\Model\Session
      */
-    protected $_checkoutSession;
+    public $checkoutSession;
 
     /**
-     * @param \Targetbay\Tracking\Helper\Data $_trackingHelper
-     * @param \Magento\Framework\Stdlib\CookieManagerInterface $_cookieManager
-     * @param \Magento\Customer\Model\Session $_customerSession
-     * @param \Magento\Framework\App\RequestInterface $_request
-     * @param \Magento\Checkout\Model\Session $_checkoutSession
+     * @param \Targetbay\Tracking\Helper\Data $trackingHelper
+     * @param \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager
+     * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Magento\Framework\App\RequestInterface $request
+     * @param \Magento\Checkout\Model\Session $checkoutSession
      */
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Framework\Stdlib\CookieManagerInterface $_cookieManager,
-        \Magento\Customer\Model\Session $_customerSession,
-        \Magento\Framework\App\RequestInterface $_request,
-        \Magento\Checkout\Model\Session $_checkoutSession
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
+        CheckoutSession $checkoutSession,
+        CustomerSession $customerSession,
+        \Magento\Framework\App\RequestInterface $request
     ) {
-        $this->_trackingHelper  = $_trackingHelper;
-        $this->_cookieManager = $_cookieManager;
-        $this->_customerSession = $_customerSession;
-        $this->_request = $_request;
-        $this->_checkoutSession = $_checkoutSession;
+        $this->_trackingHelper  = $trackingHelper;
+        $this->_cookieManager = $cookieManager;
+        $this->_customerSession = $customerSession;
+        $this->_request = $request;
+        $this->_checkoutSession = $checkoutSession;
         $this->_apiToken        = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName       = $this->_trackingHelper->getApiIndex();
         $expireAfter = 1380;
-        //$this->_tbHost = $this->_trackingHelper->getHostname();
 
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $coreSession = $objectManager->create('Magento\Framework\Session\SessionManagerInterface');
@@ -75,8 +76,8 @@ class EventHandles implements ObserverInterface
             $coreSession->setTrackingSessionId($trackingSession);
         }
 
-        if (isset($_SESSION['last_session'])) {
-            $secondsInactive = time() - $_SESSION['last_session'];
+        if (!empty($coreSession->getLastSession())) {
+            $secondsInactive = time() - $coreSession->getLastSession();
             $expireAfterSeconds = $expireAfter * 60;
             if ($secondsInactive > $expireAfterSeconds) {
                 $coreSession->unsProductReviewCount();
@@ -99,7 +100,6 @@ class EventHandles implements ObserverInterface
         $coreSession = $objectManager->get('Magento\Framework\Session\Generic');
         $_cookieMetadata = $objectManager->get('Magento\Framework\Stdlib\Cookie\CookieMetadataFactory');
 
-        // For anonymous user
         $customerName = self::ANONYMOUS_USER;
         $customerEmail = self::ANONYMOUS_USER;
         $customerId = '';
@@ -111,14 +111,15 @@ class EventHandles implements ObserverInterface
             ->setDomain($coreSession->getCookieDomain())
             ->setHttpOnly(false);
 
-        // for logged user.
         if ($this->_customerSession->isLoggedIn()) {
             $customer = $this->_customerSession->getCustomer();
             $customerName = $customer->getName();
             $customerId = $customer->getId();
             $customerEmail = $customer->getEmail();
             $this->_cookieManager->setPublicCookie('user_loggedin', true, $metadata);
-            $this->_cookieManager->setPublicCookie('afterlogin_session_id', $coreSession->getCustomerSessionId(), $metadata);
+            $this->_cookieManager->setPublicCookie('afterlogin_session_id', 
+                                                    $coreSession->getCustomerSessionId(), 
+                                                    $metadata);
             $this->_cookieManager->setPublicCookie('trackingid', $customerId, $metadata);
         } else {
             if (!empty($this->_request->getParam('guest_user_id'))) {
@@ -128,7 +129,9 @@ class EventHandles implements ObserverInterface
             }
             $this->_cookieManager->setPublicCookie('user_loggedin', false, $metadata);
         }
-        !empty($customerId) ? $this->_cookieManager->setPublicCookie('trackingid', $customerId, $metadata) : '';
+        !empty($customerId) ? $this->_cookieManager->setPublicCookie('trackingid', 
+                                                                      $customerId, 
+                                                                      $metadata) : '';
 
         $this->_cookieManager->setPublicCookie('trackingemail', $customerEmail, $metadata);
         $this->_cookieManager->setPublicCookie('trackingname', $customerName, $metadata);
@@ -137,7 +140,9 @@ class EventHandles implements ObserverInterface
         $this->_cookieManager->setPublicCookie('trackingorderid', $quoteId, $metadata);
 
         if (!$this->_cookieManager->getCookie('trackingsession')) {
-            $this->_cookieManager->setPublicCookie('trackingsession', $coreSession->getTrackingSessionId(), $metadata);
+            $this->_cookieManager->setPublicCookie('trackingsession', 
+                                                    $coreSession->getTrackingSessionId(), 
+                                                    $metadata);
         }
     }
 
@@ -164,13 +169,18 @@ class EventHandles implements ObserverInterface
 
         $this->setCookieValues();
 
-        // Set Token Values.
-        if (($requestInterface->getParam('utm_source') !== '') && !$this->_cookieManager->getCookie('utm_source')) {
-            $this->_cookieManager->setPublicCookie('utm_source', $requestInterface->getParam('utm_source'), $metadata);
+        if (($requestInterface->getParam('utm_source') !== '') 
+                && !$this->_cookieManager->getCookie('utm_source')) {
+            $this->_cookieManager->setPublicCookie('utm_source', 
+                                                    $requestInterface->getParam('utm_source'), 
+                                                    $metadata);
         }
 
-        if (($requestInterface->getParam('token') !== '') && !$this->_cookieManager->getCookie('utm_token')) {
-            $this->_cookieManager->setPublicCookie('utm_token', $requestInterface->getParam('token'), $metadata);
+        if (($requestInterface->getParam('token') !== '') 
+                && !$this->_cookieManager->getCookie('utm_token')) {
+            $this->_cookieManager->setPublicCookie('utm_token', 
+                                                    $requestInterface->getParam('token'), 
+                                                    $metadata);
         }
     }
 }

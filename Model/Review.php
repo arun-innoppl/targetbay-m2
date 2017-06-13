@@ -9,6 +9,7 @@
 namespace Targetbay\Tracking\Model;
 
 use Magento\Framework\Model\AbstractModel;
+use Magento\Customer\Model\Session as CustomerSession;
 
 /**
  * Defines the implementation class of the Review.
@@ -19,22 +20,22 @@ class Review extends AbstractModel
     /**
      * @var \Targetbay\Tracking\Helper\Data
      */
-    protected $_trackingHelper;
+    public $trackingHelper;
 
     /**
      * @var \Magento\Customer\Model\Session
      */
-    protected $_customerSession;
+    public $customerSession;
 
     /**
      * @var \Magento\Framework\App\RequestInterface
      */
-    protected $_request;
+    public $request;
 
     /**
      * @var \Magento\Framework\HTTP\ZendClientFactory
      */
-    protected $_httpClientFactory;
+    public $httpClientFactory;
 
     /**
      * @param \Targetbay\Tracking\Helper\Data
@@ -43,15 +44,15 @@ class Review extends AbstractModel
      * @param \Magento\Framework\HTTP\ZendClientFactory
      */
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Framework\App\RequestInterface $_request,
-        \Magento\Customer\Model\Session $_customerSession,
-        \Magento\Framework\HTTP\ZendClientFactory $_httpClientFactory
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Framework\App\RequestInterface $request,
+        CustomerSession $customerSession,
+        \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_request = $_request;
-        $this->_customerSession = $_customerSession;
-        $this->_httpClientFactory = $_httpClientFactory;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_request = $request;
+        $this->_customerSession = $customerSession;
+        $this->_httpClientFactory = $httpClientFactory;
     }
 
     /**
@@ -82,11 +83,13 @@ class Review extends AbstractModel
             $customerId = $this->_customerSession->getCustomer()->getId();
         }
 
-        if (trim($_hostname) === '' || trim($_api_token) === '' || trim($_api_index) === '' || trim($customerId) === '') {
+        if (trim($_hostname) === '' || trim($_api_token) === '' || trim($_api_index) === '' 
+                        || trim($customerId) === '') {
             return false;
         }
 
-        $url = $_hostname . 'review-list-by-user/' . $customerId . '/' . $_page_num . '/' . $_limit . '?api_token=' . $_api_token;
+        $url = $_hostname . 'review-list-by-user/' . $customerId . '/' . $_page_num . '/' . 
+                    $_limit . '?api_token=' . $_api_token;
 
         $_params['index_name'] = $_api_index;
 

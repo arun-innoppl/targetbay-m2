@@ -7,28 +7,23 @@ use Magento\Framework\Event\ObserverInterface;
 
 class SearchProductEventHandler implements ObserverInterface
 {
-    //const ANONYMOUS_USER = 'anonymous';
-    //const ALL_PAGES = 'all';
-    //const PAGE_VISIT = 'page-visit';
-    //const PAGE_REFERRAL = 'referrer';
     const CATALOG_SEARCH = 'searched';
 
-    protected $_productRepository;
-    protected $_trackingHelper;
-    protected $_request;
-
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    public $productRepository;
+    public $trackingHelper;
+    public $request;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Catalog\Model\ProductRepository $_productRepository,
-        RequestInterface $_request
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Catalog\Model\ProductRepository $productRepository,
+        RequestInterface $request
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_productRepository = $_productRepository;
-        $this->_request = $_request;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_productRepository = $productRepository;
+        $this->_request = $request;
         $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName = $this->_trackingHelper->getApiIndex();
         $this->_tbHost = $this->_trackingHelper->getHostname();

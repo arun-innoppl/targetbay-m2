@@ -16,9 +16,9 @@ use Targetbay\Tracking\Api\CustomerRepoInterface;
 class CustomerRepo implements CustomerRepoInterface
 {
     /**
-     * @var \Targetbay\Tracking\Helper\Data $_trackingHelper
+     * @var \Targetbay\Tracking\Helper\Data $trackingHelper
      */
-    protected $_trackingHelper;
+    public $trackingHelper;
 
     /**
      * @param \Targetbay\Tracking\Helper\Data $trackingHelper
@@ -38,16 +38,17 @@ class CustomerRepo implements CustomerRepoInterface
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         //$customerCollection = $objectManager->create('\Magento\Customer\Model\ResourceModel\Customer\CollectionFactory');
         $customerFactory = $objectManager->create('\Magento\Customer\Model\CustomerFactory');
-        //$customers = array();
         $collection = $customerFactory->create()->getCollection();
 
         $collection->addNameToSelect();
 
-        $collection->joinAttribute('billing_postcode', 'customer_address/postcode', 'default_billing', null, 'left')
+        $collection->joinAttribute('billing_postcode', 'customer_address/postcode', 'default_billing', null, 
+                                    'left')
             ->joinAttribute('billing_city', 'customer_address/city', 'default_billing', null, 'left')
             ->joinAttribute('billing_telephone', 'customer_address/telephone', 'default_billing', null, 'left')
             ->joinAttribute('billing_region', 'customer_address/region', 'default_billing', null, 'left')
-            ->joinAttribute('billing_country_id', 'customer_address/country_id', 'default_billing', null, 'left')
+            ->joinAttribute('billing_country_id', 'customer_address/country_id', 'default_billing', null, 
+                            'left')
             ->joinAttribute('company', 'customer_address/company', 'default_billing', null, 'left');
 
         $collection->setCurPage($searchCriteria->getCurrentPage());

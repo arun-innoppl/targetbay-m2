@@ -3,23 +3,24 @@
 namespace Targetbay\Tracking\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Checkout\Model\Session as CheckoutSession;
 
 class EmptyCartEventHandler implements ObserverInterface
 {
     const REMOVECART = 'remove-to-cart';
 
-    protected $_trackingHelper;
-    protected $_checkoutSession;
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    protected $trackingHelper;
+    protected $checkoutSession;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Checkout\Model\Session $_checkoutSession
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        CheckoutSession $checkoutSession
     ) {
-        $this->_trackingHelper  = $_trackingHelper;
-        $this->_checkoutSession = $_checkoutSession;
+        $this->_trackingHelper  = $trackingHelper;
+        $this->_checkoutSession = $checkoutSession;
         $this->_apiToken        = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName       = $this->_trackingHelper->getApiIndex();
         $this->_tbHost   = $this->_trackingHelper->getHostname();
@@ -49,8 +50,6 @@ class EmptyCartEventHandler implements ObserverInterface
         foreach ($items as $item) {
             $this->removeCartItem($item);
         }
-
-        return;
     }
 
     public function removeCartItem($item)
@@ -60,7 +59,6 @@ class EmptyCartEventHandler implements ObserverInterface
         }
         $data = array_merge($this->_trackingHelper->getCartInfo(), $this->_trackingHelper->getItemInfo($item));
         $this->pushPages($data, self::REMOVECART);
-
-        return;
+        return true;
     }
 }

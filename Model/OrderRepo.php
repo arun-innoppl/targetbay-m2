@@ -20,25 +20,25 @@ class OrderRepo implements OrderRepoInterface
     const ORDER_COMPLETE = 'complete';
 
     /**
-     * @var \Targetbay\Tracking\Helper\Data $_trackingHelper
+     * @var \Targetbay\Tracking\Helper\Data $trackingHelper
      */
-    protected $_trackingHelper;
+    public $trackingHelper;
 
     /**
-     * @var \Magento\Directory\Api\CountryInformationAcquirerInterface $_countryInformation
+     * @var \Magento\Directory\Api\CountryInformationAcquirerInterface $countryInformation
      */
-    protected $_countryInformation;
+    public $countryInformation;
 
     /**
-     * @param \Targetbay\Tracking\Helper\Data $_trackingHelper
-     * @param \Magento\Directory\Api\CountryInformationAcquirerInterface $_countryInformation
+     * @param \Targetbay\Tracking\Helper\Data $trackingHelper
+     * @param \Magento\Directory\Api\CountryInformationAcquirerInterface $countryInformation
      */
     public function __construct(
-        \Magento\Directory\Api\CountryInformationAcquirerInterface $_countryInformation,
-        \Targetbay\Tracking\Helper\Data $_trackingHelper
+        \Magento\Directory\Api\CountryInformationAcquirerInterface $countryInformation,
+        \Targetbay\Tracking\Helper\Data $trackingHelper
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_countryInformation = $_countryInformation;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_countryInformation = $countryInformation;
     }
 
     /**

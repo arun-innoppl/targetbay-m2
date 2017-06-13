@@ -8,16 +8,16 @@ class CheckoutEventHandler implements ObserverInterface
 {
     const CHECKOUT = 'checkout';
 
-    protected $_trackingHelper;
+    public $trackingHelper;
 
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper
+        \Targetbay\Tracking\Helper\Data $trackingHelper
     ) {
-        $this->_trackingHelper  = $_trackingHelper;
+        $this->_trackingHelper  = $trackingHelper;
         $this->_apiToken        = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName       = $this->_trackingHelper->getApiIndex();
         $this->_tbHost   = $this->_trackingHelper->getHostname();

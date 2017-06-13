@@ -1,12 +1,5 @@
 <?php
 /**
- * Copyright © 2016-2017 Targetbay. All rights reserved.
- */
-
-// @codingStandardsIgnoreFile
-?>
-<?php
-/**
  * Tracking template
  *
  * @var $block \Targetbay\Tracking\Block\Tracking
@@ -18,11 +11,19 @@ $trackingHelper = $objectManager->get('Targetbay\Tracking\Helper\Data');
 
 $_productInfo = $block->getProductInfo();
 $_userInfo = $block->getUserInfo();
+$_productStatusInfo = $block->getProductStockInfo();
 $visitorName = \Targetbay\Tracking\Helper\Data::ANONYMOUS_USER;
 
-$pageVisitData = ''; $pageVisitUrl = ''; $trackingTypeVal = '';
-$_productName = ''; $_productId = ''; $_productImage = ''; $_productUrl = '';
-$_userId = ''; $_userEmail = ''; $_userName = '';
+$pageVisitData = '';
+$pageVisitUrl = '';
+$trackingTypeVal = '';
+$_productName = '';
+$_productId = '';
+$_productImage = '';
+$_productUrl = '';
+$_userId = '';
+$_userEmail = '';
+$_userName = '';
 if (isset($_productInfo) && !empty($_productInfo)) {
     $_productId = $_productInfo['product_id'] ? $_productInfo['product_id'] : '';
     $_productName = $_productInfo['product_name'] ? $_productInfo['product_name'] : '';
@@ -50,7 +51,6 @@ $apiStatus = $trackingHelper->getApiStatus();
 $trackingEnabled = $trackingHelper->trackingEnabled();
 
 if ($trackingEnabled) :
-
     $trackingScript = $trackingHelper->getTrackingScript();
     if ($trackingScript) {
         $trackingCode = $trackingScript;
@@ -82,6 +82,8 @@ if ($trackingEnabled) :
             productId: '<?php echo $_productId; ?>',
             productImageUrl: '<?php echo $_productImage; ?>',
             productUrl: '<?php echo $_productUrl; ?>',
+            productStockStatus: '<?php echo $this->getStockAvaliability(); ?>', 
+            childProduct: '<?php echo $this->getProductStockInfo(); ?>',
             userId: '<?php echo $_userId; ?>',
             userMail: '<?php echo $_userEmail; ?>',
             userName: '<?php echo $_userName; ?>',
@@ -100,9 +102,10 @@ if ($trackingEnabled) :
                 g.async = 'true';
                 s.parentNode.insertBefore(g, s);
             }
-        })(document, [
-            'track'
-        ], tbConfig);
+        })(document, 
+            ['track'], 
+            tbConfig
+        );
     </script>
 <?php endif; ?>
 <?php $siteReviewSnippets = $trackingHelper->getSiteReviewSnippets();?>
@@ -114,7 +117,7 @@ if ($trackingEnabled) :
         <span itemprop="reviewCount" content="<?php echo $siteReviewSnippets['reviews_count']; ?>"></span>
         <span itemprop="ratingCount" content="<?php echo $siteReviewSnippets['reviews_count']; ?>"></span>
     </div>
-    <?php if ($siteReviewSnippets['reviews_count'] > 0):  ?> 
+    <?php if ($siteReviewSnippets['reviews_count'] > 0): ?> 
     <?php foreach ($siteReviewSnippets['reviews']  as $key => $aggregateReviewDetails): ?>
         <?php $reviewId = $aggregateReviewDetails->_id; ?>
         <?php $reviewTitle = $aggregateReviewDetails->_source->title; ?>
@@ -123,7 +126,8 @@ if ($trackingEnabled) :
         <?php $reviewRating = $aggregateReviewDetails->_source->review_rating; ?>
         <?php $userName = $aggregateReviewDetails->_source->user_name; ?>
 
-        <div itemprop="review" id="<?php echo $block->escapeHtml($reviewTitle) . '-' . $key; ?>" itemscope itemtype="http://schema.org/Review" data-reviewid="<?php echo $reviewId; ?>">
+        <div itemprop="review" id="<?php echo $block->escapeHtml($reviewTitle) . '-' . $key; ?>" 
+            itemscope itemtype="http://schema.org/Review" data-reviewid="<?php echo $reviewId; ?>">
             <span itemprop="name" content="<?php echo $block->escapeHtml($reviewTitle); ?>"></span> 
             <span itemprop="description" content="<?php echo $block->escapeHtml($review); ?>"></span> 
             <span itemprop="datePublished" content="<?php echo date('m/d/Y', $timestamp); ?>"></span>

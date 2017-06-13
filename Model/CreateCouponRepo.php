@@ -17,24 +17,24 @@ class CreateCouponRepo implements CreateCouponInterface
 {
 
     /**
-     * @var \Magento\Framework\App\RequestInterface $_request
+     * @var \Magento\Framework\App\RequestInterface $request
      */
-    protected $_request;
+    public $request;
 
     /**
-     * @param \Magento\Framework\App\RequestInterface $_request
+     * @param \Magento\Framework\App\RequestInterface $request
      */
     public function __construct(
-        \Magento\Framework\App\RequestInterface $_request
+        \Magento\Framework\App\RequestInterface $request
     ) {
-        $this->_request = $_request;
+        $this->_request = $request;
     }
 
     /**
-          * create coupon code.
+     * create coupon code.
      * @throws \Exception
      * @return int
-          */
+     */
     public function createcoupon()
     {
         $times_used = $this->_request->getParam('no_times');

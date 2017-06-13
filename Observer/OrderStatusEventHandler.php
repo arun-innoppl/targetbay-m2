@@ -9,23 +9,23 @@ class OrderStatusEventHandler implements ObserverInterface
     const ANONYMOUS_USER = 'anonymous';
     const ORDER_STATUS = 'order-status';
 
-    protected $_request;
-    protected $_trackingHelper;
-    protected $_registry;
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
-    private $_logger;
+    public $request;
+    public $trackingHelper;
+    public $registry;
+    public $logger;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Framework\App\RequestInterface $_request,
-        \Psr\Log\LoggerInterface $_logger,
-        \Magento\Framework\Registry $_registry
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Framework\App\RequestInterface $request,
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Registry $registry
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_request = $_request;
-        $this->_registry = $_registry;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_request = $request;
+        $this->_registry = $registry;
         $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName = $this->_trackingHelper->getApiIndex();
         $this->_tbHost = $this->_trackingHelper->getHostname();
@@ -59,9 +59,6 @@ class OrderStatusEventHandler implements ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        //$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        //$orderInfo = array();
-
         if (!$this->_trackingHelper->canTrackPages(self::ORDER_STATUS)) {
             return false;
         }
@@ -80,7 +77,8 @@ class OrderStatusEventHandler implements ObserverInterface
             }
 
             $gName = !empty($guestUsername) ? $guestUsername : self::ANONYMOUS_USER;
-            $data ['user_name'] = $order->getCustomerIsGuest() ? $gName : $data ['first_name'] . ' ' . $data ['last_name'];
+            $customerName = $data ['first_name'] . ' ' . $data ['last_name'];
+            $data ['user_name'] = $order->getCustomerIsGuest() ? $gName : $customerName;
             $data ['user_mail'] = $order->getCustomerEmail();
             $data ['order_id'] = $order->getId();
             $data ['payment_title'] = $order->getPayment()->getMethodInstance()->getTitle();

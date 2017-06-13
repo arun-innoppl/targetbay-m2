@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <body>
+      <body>
         <referenceBlock name="reviews.tab" remove="true"/>
         <referenceBlock name="product.info.review" remove="true"/>
         <referenceBlock name="product.info.details">
@@ -13,10 +13,15 @@
                 </arguments>
             </block>
         </referenceBlock>
-        <referenceBlock name="content">
-            <block class="Targetbay\Tracking\Block\Product\Richsnippets" name="tracking-product-richsnippets"
-                   as="tracking-product-richsnippets" after="product.info">
-            </block>
+
+        <referenceBlock name="product.info.extrahint">      
+            <block class="Targetbay\Tracking\Block\Product\Inventary" name="tracking-product-inventary"
+                   as="tracking-inventary" before="-" template="Targetbay_Tracking::product/inventary.phtml" />
         </referenceBlock>
+
+        <referenceContainer name="content">
+            <block class="Targetbay\Tracking\Block\Product\Richsnippets" name="tracking-product-richsnippets"
+                   as="tracking-product-richsnippets" after="product.info" />
+        </referenceContainer>
     </body>
 </page>

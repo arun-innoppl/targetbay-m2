@@ -3,18 +3,22 @@
 namespace Targetbay\Tracking\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
+use \Magento\Framework\Session\Generic as CoreSession;
 
 class QuoteMergeEventHandler implements ObserverInterface
 {
-    protected $_trackingHelper;
-    protected $_coreSession;
+    public $trackingHelper;
+    public $coreSession;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Framework\Session\Generic $_coreSession
+        \Magento\Framework\App\Helper\Context $context,
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        CoreSession $coreSession
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_coreSession = $_coreSession;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_coreSession = $coreSession;
+        $this->_logger = $context->getLogger();
+        parent::__construct($context);
     }
 
     /**
@@ -31,7 +35,7 @@ class QuoteMergeEventHandler implements ObserverInterface
                 $cart->truncate();
             } catch (\Exception $e) {
                 $this->_trackingHelper->debug('Error:' . $e->getMessage());
-                $objectManager->get('Psr\Log\LoggerInterface')->critical($e);
+                $this->_logger->critical($e);
             }
         }
     }

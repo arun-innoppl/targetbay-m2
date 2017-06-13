@@ -10,18 +10,18 @@ class AddProductEventHandler implements ObserverInterface
     const ADD_PRODUCT = 'add-product';
     const UPDATE_PRODUCT = 'update-product';
 
-    protected $_request;
-    protected $_trackingHelper;
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    public $request;
+    public $trackingHelper;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        RequestInterface $_request,
-        \Targetbay\Tracking\Helper\Data $_trackingHelper
+        RequestInterface $request,
+        \Targetbay\Tracking\Helper\Data $trackingHelper
     ) {
-        $this->_request = $_request;
-        $this->_trackingHelper  = $_trackingHelper;
+        $this->_request = $request;
+        $this->_trackingHelper  = $trackingHelper;
         $this->_apiToken        = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName       = $this->_trackingHelper->getApiIndex();
         $this->_tbHost   = $this->_trackingHelper->getHostname();
@@ -50,7 +50,6 @@ class AddProductEventHandler implements ObserverInterface
             return false;
         }
 
-        //$params = $this->_request->getParams();
         $product = $observer->getEvent()->getProduct();
 
         if ($product->getId()) {

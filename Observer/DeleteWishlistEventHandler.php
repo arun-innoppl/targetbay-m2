@@ -3,33 +3,34 @@
 namespace Targetbay\Tracking\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Customer\Model\Session as CustomerSession;
 
 class DeleteWishlistEventHandler implements ObserverInterface
 {
     const REMOVE_WISHLIST = 'remove-wishlist';
 
-    protected $_request;
-    protected $_trackingHelper;
-    protected $_itemFactory;
-    protected $_wishlistFactory;
-    protected $_customerSession;
+    public $request;
+    public $trackingHelper;
+    public $itemFactory;
+    public $wishlistFactory;
+    public $customerSession;
 
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Framework\App\RequestInterface $_request,
-        \Magento\Wishlist\Model\ItemFactory $_itemFactory,
-        \Magento\Wishlist\Model\WishlistFactory $_wishlistFactory,
-        \Magento\Customer\Model\Session $_customerSession
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Framework\App\RequestInterface $request,
+        \Magento\Wishlist\Model\ItemFactory $itemFactory,
+        \Magento\Wishlist\Model\WishlistFactory $wishlistFactory,
+        CustomerSession $customerSession
     ) {
-        $this->_trackingHelper  = $_trackingHelper;
-        $this->_request = $_request;
-        $this->_itemFactory = $_itemFactory;
-        $this->_wishlistFactory = $_wishlistFactory;
-        $this->_customerSession = $_customerSession;
+        $this->_trackingHelper  = $trackingHelper;
+        $this->_request = $request;
+        $this->_itemFactory = $itemFactory;
+        $this->_wishlistFactory = $wishlistFactory;
+        $this->_customerSession = $customerSession;
 
         $this->_apiToken        = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName       = $this->_trackingHelper->getApiIndex();
@@ -62,7 +63,6 @@ class DeleteWishlistEventHandler implements ObserverInterface
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        //$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         if (!$this->_trackingHelper->canTrackPages(self::REMOVE_WISHLIST)) {
             return false;
         }

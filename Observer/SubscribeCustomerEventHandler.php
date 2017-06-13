@@ -3,13 +3,10 @@
 namespace Targetbay\Tracking\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Customer\Model\Session as CustomerSession;
 
 class SubscribeCustomerEventHandler implements ObserverInterface
 {
-    //const ANONYMOUS_USER = 'anonymous';
-    //const ALL_PAGES = 'all';
-    //const PAGE_VISIT = 'page-visit';
-    //const PAGE_REFERRAL = 'referrer';
     const SUBSCRIBE_CUSTOMER = 'user-subscribe';
 
     const STATUS_SUBSCRIBED = 1;
@@ -17,24 +14,24 @@ class SubscribeCustomerEventHandler implements ObserverInterface
     const STATUS_UNSUBSCRIBED = 3;
     const STATUS_UNCONFIRMED = 4;
 
-    protected $_trackingHelper;
-    protected $_customerSession;
-    protected $_request;
-    protected $_storeManager;
+    public $trackingHelper;
+    public $customerSession;
+    public $request;
+    public $storeManager;
 
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Magento\Customer\Model\Session $_customerSession,
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Store\Model\StoreManagerInterface $_storeManager,
-        \Magento\Framework\App\RequestInterface $_request
+        CustomerSession $customerSession,
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\App\RequestInterface $request
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_customerSession = $_customerSession;
-        $this->_storeManager = $_storeManager;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_customerSession = $customerSession;
+        $this->_storeManager = $storeManager;
         $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName = $this->_trackingHelper->getApiIndex();
         $this->_tbHost = $this->_trackingHelper->getHostname();
@@ -86,10 +83,9 @@ class SubscribeCustomerEventHandler implements ObserverInterface
         $data = $this->_trackingHelper->visitInfo();
 
         if (empty($email)) {
-            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            //$customer_data = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();;
             $subscriberFactory = $objectManager->create('Magento\Newsletter\Model\Subscriber')
-                ->loadByCustomerId($customerId);
+                                                ->loadByCustomerId($customerId);
 
             switch ($subscriberFactory->getSubscriberStatus()) {
                 case self::STATUS_UNSUBSCRIBED:
@@ -113,7 +109,8 @@ class SubscribeCustomerEventHandler implements ObserverInterface
         }
 
         $status = !empty($email) ? 'Subscribed' : $status;
-        $data['user_mail'] = $this->_customerSession->isLoggedIn() ? $this->_customerSession->getCustomer()->getEmail() : $email;
+        $data['user_mail'] = $this->_customerSession->isLoggedIn() ? 
+                                $this->_customerSession->getCustomer()->getEmail() : $email;
         $data['subscription_status'] = $status;
         $this->pushPages($data, self::SUBSCRIBE_CUSTOMER);
     }

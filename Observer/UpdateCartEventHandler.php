@@ -3,6 +3,7 @@
 namespace Targetbay\Tracking\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Checkout\Model\Session as CheckoutSession;
 
 class UpdateCartEventHandler implements ObserverInterface
 {
@@ -12,24 +13,25 @@ class UpdateCartEventHandler implements ObserverInterface
     //const PAGE_REFERRAL = 'referrer';
     const UPDATECART = 'update-cart';
 
-    protected $_productRepository;
-    protected $_cart;
-    protected $_trackingHelper;
-    protected $_checkoutSession;
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    public $productRepository;
+    public $cart;
+    public $trackingHelper;
+    public $checkoutSession;
+
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
         \Targetbay\Tracking\Helper\Data $_trackingHelper,
         \Magento\Catalog\Model\ProductRepository $_productRepository,
         \Magento\Checkout\Model\Cart $_cart,
-        \Magento\Checkout\Model\Session $_checkoutSession
+        CheckoutSession $checkoutSession
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_productRepository = $_productRepository;
-        $this->_cart = $_cart;
-        $this->_checkoutSession = $_checkoutSession;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_productRepository = $productRepository;
+        $this->_cart = $cart;
+        $this->_checkoutSession = $checkoutSession;
         $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName = $this->_trackingHelper->getApiIndex();
         $this->_tbHost = $this->_trackingHelper->getHostname();

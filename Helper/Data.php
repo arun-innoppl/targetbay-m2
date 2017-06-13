@@ -7,6 +7,10 @@
 
 namespace Targetbay\Tracking\Helper;
 
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Framework\Session\Generic as CoreSession;
+
 /**
  * Class Data
  *
@@ -21,7 +25,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const PAGE_VISIT = 'page-visit';
     const PAGE_REFERRAL = 'referrer';
 
-    // ToDo: do we need?
     const ADD_TO_CART = 'add-to-cart';
 
     const BILLING = 'billing';
@@ -46,7 +49,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const RATINGS_STATS = 'ratings-stats';
     const QUESTION_STATS = 'qa-stats';
 
-    // ToDo: do we need?
     const VISITOR_ID = 6000000;
 
     const STATUS_SUBSCRIBED = 1;
@@ -65,92 +67,92 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
-    protected $_scopeConfig;
+    public $scopeConfig;
 
     /**
      * @var \Magento\Directory\Api\CountryInformationAcquirerInterface
      */
-    protected $_countryInformation;
+    public $countryInformation;
 
     /**
      * @var \Magento\Framework\Stdlib\CookieManagerInterface
      */
-    protected $_cookieManager;
+    public $cookieManager;
 
     /**
      * @var \Magento\Framework\Stdlib\DateTime\DateTime
      */
-    protected $_date;
+    public $date;
 
     /**
      * @var \Magento\Framework\Url\Helper\Data
      */
-    protected $_urlHelper;
+    public $urlHelper;
 
     /**
      * @var \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress
      */
-    protected $_remoteAddress;
+    public $remoteAddress;
 
     /**
      * @var \Magento\Framework\HTTP\Header
      */
-    protected $_httpHeader;
+    public $httpHeader;
 
     /**
      * @var \Magento\Framework\View\Page\Title
      */
-    protected $_pageTitle;
+    public $pageTitle;
 
     /**
      * @var \Magento\Framework\Session\Generic
      */
-    protected $_coreSession;
+    public $coreSession;
 
     /**
      * @var \Magento\Customer\Model\Session
      */
-    protected $_customerSession;
+    public $customerSession;
 
     /**
      * @var \Magento\Checkout\Model\Session
      */
-    protected $_checkoutSession;
+    public $checkoutSession;
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
-    public $_storeManager;
+    public $storeManager;
 
     /**
      * @var \Magento\Framework\HTTP\ZendClientFactory
      */
-    protected $_httpClientFactory;
+    public $httpClientFactory;
 
     /**
      * @var \Magento\Framework\UrlInterface
      */
-    protected $_urlInterface;
+    public $urlInterface;
 
     /**
      * @var \Magento\Framework\Session\Generic
      */
-    protected $session;
+    public $session;
 
     /**
      * @var \Magento\Framework\Module\ModuleListInterface
      */
-    protected $_moduleList;
+    public $moduleList;
 
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    public $logger;
 
     /**
      * @var \Magento\Framework\HTTP\Client\Curl
      */
-    protected $_curl;
+    public $curl;
 
     /**
      * @var array of modules
@@ -199,13 +201,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\HTTP\PhpEnvironment\RemoteAddress $remoteAddress,
         \Magento\Framework\HTTP\Header $httpHeader,
         \Magento\Framework\View\Page\Title $pageTitle,
-        \Magento\Framework\Session\Generic $coreSession,
-        \Magento\Customer\Model\Session $customerSession,
-        \Magento\Checkout\Model\Session $checkoutSession,
+        CoreSession $coreSession,
+        CustomerSession $customerSession,
+        CheckoutSession $checkoutSession,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\HTTP\ZendClientFactory $httpClientFactory,
         \Magento\Framework\UrlInterface $urlInterface,
-        \Magento\Framework\Session\Generic $session,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Module\ModuleListInterface $moduleList,
         \Magento\Framework\HTTP\Client\Curl $curl
@@ -224,7 +225,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $this->_storeManager = $storeManager;
         $this->_httpClientFactory = $httpClientFactory;
         $this->_urlInterface = $urlInterface;
-        $this->_session = $session;
         $this->logger = $logger;
         $this->_moduleList = $moduleList;
     }
@@ -236,7 +236,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function trackingEnabled()
     {
-        return (bool) $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/enabled', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return (bool)$this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/enabled',
+                                                \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -246,7 +247,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getHostname()
     {
-        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/hostname', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/hostname',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -256,7 +258,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getApiToken()
     {
-        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/api_token', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/api_token',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -266,7 +269,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getApiStatus()
     {
-        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/api_status', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/api_status',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -276,7 +280,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getApiIndex()
     {
-        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/api_index', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/api_index',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -286,7 +291,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function logEnabled()
     {
-        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/debug', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/debug',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -294,7 +300,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getLogFileName()
     {
-        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/debug_file', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/debug_file',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -304,9 +311,21 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function availablePageTypes()
     {
-        $types = $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/page_types', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $types = $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/page_types',
+                                                \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $typesArray = explode(',', $types);
         return $typesArray;
+    }
+
+    /**
+     * Check backorders is enabled or not
+     *
+     * @return boolean
+     */
+    public function getBackorderStatus()
+    {
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/manage_stock',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -316,7 +335,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getReviewPageSize()
     {
-        $reviewSize = $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/reviews_per_page', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $reviewSize = $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/reviews_per_page',
+                                                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         if ($reviewSize) {
             $reviewSize = $reviewSize;
         } else {
@@ -342,7 +362,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getEmailStatus()
     {
-        $emailStatus = $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/disable_email', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $emailStatus = $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/disable_email',
+                                                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         if ($emailStatus) {
             $emailStatus = $emailStatus;
@@ -370,7 +391,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getTrackingScript()
     {
-        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/tracking_script', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue('targetbay_tracking/tracking_groups/tracking_script',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -380,7 +402,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getCouponCodeStatus()
     {
-        return $this->_scopeConfig->getValue('targetbay_tracking/coupon_configuration/enabled', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue('targetbay_tracking/coupon_configuration/enabled',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -390,7 +413,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getCouponCodeLength()
     {
-        return $this->_scopeConfig->getValue('targetbay_tracking/coupon_configuration/length', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue('targetbay_tracking/coupon_configuration/length',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -400,7 +424,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getCouponCodeFormat()
     {
-        return $this->_scopeConfig->getValue('targetbay_tracking/coupon_configuration/format', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->_scopeConfig->getValue('targetbay_tracking/coupon_configuration/format',
+                                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -443,7 +468,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $data = [];
 
         try {
-            if (in_array($moduleName, $this->moduleNameArray, true) && $this->_customerSession->isLoggedIn()) {
+            if (in_array($moduleName, $this->moduleNameArray, true) 
+                    && $this->_customerSession->isLoggedIn()) {
                 $user_id = $this->_customerSession->getCustomerId();
             } else {
                 $user_id = $this->_cookieManager->getCookie('targetbay_session_id');
@@ -455,15 +481,21 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             }
 
             $data['user_id'] = $user_id;
-            $data['session_id'] = $this->_customerSession->isLoggedIn() ? $coreSession->getCustomerSessionId() : $this->_cookieManager->getCookie('targetbay_session_id');
+            $data['session_id'] = $this->_customerSession->isLoggedIn() ? 
+                                    $coreSession->getCustomerSessionId() : 
+                                    $this->_cookieManager->getCookie('targetbay_session_id');
 
-            $data['user_name'] = $this->_customerSession->isLoggedIn() ? $customerName : self::ANONYMOUS_USER;
+            $data['user_name'] = $this->_customerSession->isLoggedIn() ? $customerName : 
+                                                    self::ANONYMOUS_USER;
             $data['page_url'] = $urlInterface->getCurrentUrl();
             $data['ip_address'] = $this->_remoteAddress->getRemoteAddress();
             $data['user_agent'] = $this->_httpHeader->getHttpUserAgent();
-            $data['utm_sources'] = $this->_cookieManager->getCookie('utm_source') ? $this->_cookieManager->getCookie('utm_source') : '';
-            $data['utm_token'] = $this->_cookieManager->getCookie('utm_token') ? $this->_cookieManager->getCookie('utm_token') : '';
-            $pageTitle = $this->_pageTitle->getShort() ? $this->_pageTitle->getShort() : $this->_checkoutSession->getTitle();
+            $data['utm_sources'] = $this->_cookieManager->getCookie('utm_source') ? 
+                                            $this->_cookieManager->getCookie('utm_source') : '';
+            $data['utm_token'] = $this->_cookieManager->getCookie('utm_token') ? 
+                                        $this->_cookieManager->getCookie('utm_token') : '';
+            $pageTitle = $this->_pageTitle->getShort() ? $this->_pageTitle->getShort() : 
+                                $this->_checkoutSession->getTitle();
             $data['page_title'] = $objectManager->get('Magento\Framework\Escaper')->escapeQuote($pageTitle);
         } catch (\Exception $e) {
             $this->logger->critical($e);
@@ -573,14 +605,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $coreSession = $objectManager->get('Magento\Framework\Session\Generic');
 
-        $data['session_id'] = $this->_customerSession->isLoggedIn() ? $coreSession->getCustomerSessionId() : $this->_cookieManager->getCookie('targetbay_session_id');
-        $data['user_id'] = $object->getCustomerId() ? $object->getCustomerId() : $this->_cookieManager->getCookie('targetbay_session_id');
+        $data['session_id'] = $this->_customerSession->isLoggedIn() ? 
+                                    $coreSession->getCustomerSessionId() : 
+                                    $this->_cookieManager->getCookie('targetbay_session_id');
+        $data['user_id'] = $object->getCustomerId() ? $object->getCustomerId() : 
+                                    $this->_cookieManager->getCookie('targetbay_session_id');
 
-        $data['utm_sources'] = $this->_cookieManager->getCookie('utm_source') ? $this->_cookieManager->getCookie('utm_source') : '';
-        $data['utm_token'] = $this->_cookieManager->getCookie('utm_token') ? $this->_cookieManager->getCookie('utm_token') : '';
+        $data['utm_sources'] = $this->_cookieManager->getCookie('utm_source') ? 
+                                        $this->_cookieManager->getCookie('utm_source') : '';
+        $data['utm_token'] = $this->_cookieManager->getCookie('utm_token') ? 
+                                    $this->_cookieManager->getCookie('utm_token') : '';
         $data['user_agent'] = $this->_httpHeader->getHttpUserAgent();
         $data['timestamp'] = strtotime($this->_date->date('Y-m-d'));
-        $pageTitle = $this->_pageTitle->getShort() ? $this->_pageTitle->getShort() : $this->_checkoutSession->getTitle();
+        $pageTitle = $this->_pageTitle->getShort() ? $this->_pageTitle->getShort() : 
+                                $this->_checkoutSession->getTitle();
         $data['page_title'] = $objectManager->get('Magento\Framework\Escaper')->escapeQuote($pageTitle);
         return $data;
     }
@@ -597,7 +635,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     	$data['user_name'] = self::ANONYMOUS_USER;
         $data['user_mail'] = self::ANONYMOUS_USER;
         $data['user_id'] = $this->_cookieManager->getCookie('targetbay_session_id');
-        $data['session_id'] = $this->_customerSession->isLoggedIn() ? $coreSession->getCustomerSessionId() : $this->_cookieManager->getCookie('targetbay_session_id');
+        $data['session_id'] = $this->_customerSession->isLoggedIn() ? 
+                                    $coreSession->getCustomerSessionId() : 
+                                    $this->_cookieManager->getCookie('targetbay_session_id');
         $data['user_agent'] = $this->_httpHeader->getHttpUserAgent();
         if ($this->_customerSession->isLoggedIn()) {
             $data['user_name'] = $this->_customerSession->getCustomer()->getName();
@@ -623,10 +663,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $dataItem = [];
         try {
-            $product = $objectManager->get('Magento\Catalog\Model\Product')->load($item->getData('product_id'));
+            $product = $objectManager->get('Magento\Catalog\Model\Product')
+                                        ->load($item->getData('product_id'));
             $dataItem['type'] = $item->getProductType();
             $dataItem['product_id'] = $item->getProductId();
-            $dataItem['product_name'] = $objectManager->get('Magento\Framework\Escaper')->escapeQuote($item->getName());
+            $dataItem['product_name'] = $objectManager->get('Magento\Framework\Escaper')
+                                                    ->escapeQuote($item->getName());
             $dataItem['product_sku'] = $product->getSku();
             $dataItem['msrp_price'] = $product->getMsrp() ? $product->getMsrp() : '';
             $dataItem['price'] = $actionType ? $item->getProduct()->getPrice() : $item->getPrice();
@@ -636,7 +678,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
             $dataItem['category'] = $this->getProductCategory($product);
             $dataItem['category_name'] = $this->getProductCategoryName($product);
-            $dataItem['quantity'] = !empty($item->getData('qty_ordered')) ? $item->getData('qty_ordered') : $qty;
+            $dataItem['quantity'] = !empty($item->getData('qty_ordered')) ? 
+                                            $item->getData('qty_ordered') : $qty;
             $dataItem['page_url'] = $product->getUrlModel()->getUrl($product);
         } catch (\Exception $e) {
             $this->logger->critical($e);
@@ -658,7 +701,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $image = $product->getData($imageType);
         $imgPath = '';
         if (!empty($image) || $image !== 'no_selection') {
-            $imgPath = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+            $imgPath = $this->_storeManager->getStore()
+                                    ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
             $imgPath .= 'catalog/product' . $product->getData($imageType);
         }
 
@@ -720,13 +764,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getAddressData($object, $type)
     {
-        $address = ($type === self::SHIPPING) ? $object->getShippingAddress() : $object->getBillingAddress();
+        $address = ($type === self::SHIPPING) ? $object->getShippingAddress() : 
+                        $object->getBillingAddress();
         $addressData = $this->getSessionInfo($object);
         $addressData['first_name'] = $address->getFirstname();
         $addressData['last_name'] = $address->getLastname();
         $guestUsername = $address->getFirstname() . ' ' . $address->getLastname();
         $gName = !empty($guestUsername) ? $guestUsername : self::ANONYMOUS_USER;
-        $addressData['user_name'] = $object->getCustomerIsGuest() ? $gName : $addressData['first_name'] . ' ' . $addressData['last_name'];
+        $addressData['user_name'] = $object->getCustomerIsGuest() ? $gName : 
+                                        $addressData['first_name'] . ' ' . $addressData['last_name'];
         $addressData['order_id'] = $object->getId();
         $addressData['user_mail'] = $object->getCustomerEmail();
         $addressData['address1'] = $address->getStreet(1);
@@ -737,7 +783,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         $countryName = '';
         if ($address->getCountryId()) {
-            $countryName = $this->_countryInformation->getCountryInfo($address->getCountryId())->getFullNameLocale();
+            $countryName = $this->_countryInformation->getCountryInfo($address->getCountryId())
+                                                    ->getFullNameLocale();
         }
 
         $addressData['country'] = $countryName !== '' ? $countryName : $address->getCountryId();
@@ -760,7 +807,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $dataItems = [];
         foreach ($items as $orderItem) {
-            $product = $objectManager->get('Magento\Catalog\Model\Product')->load($orderItem->getData('product_id'));
+            $product = $objectManager->get('Magento\Catalog\Model\Product')
+                                    ->load($orderItem->getData('product_id'));
             $productVisibility = $product->getVisibility();
             if ($productVisibility != 1) {
                 $dataItem = $this->getItemInfo($orderItem);
@@ -784,13 +832,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getCustomOptionsInfo($item, $orderExportApi)
     {
-        $customOptions = $orderExportApi ? $item->getProductOptions() : $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+        $customOptions = $orderExportApi ? $item->getProductOptions() : 
+                        $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
 
         if (empty($customOptions['options']) && empty($customOptions ['attributes_info'])) {
             return false;
         }
         $superAttributeInfo = isset($customOptions ['attributes_info']) ? $this->getOptionValues($customOptions ['attributes_info']) : [];
-        $customOptionInfo = isset($customOptions ['options']) ? $this->getOptionValues($customOptions ['options']) : [];
+        $customOptionInfo = isset($customOptions ['options']) ? 
+                                $this->getOptionValues($customOptions ['options']) : [];
 
         return array_merge($superAttributeInfo, $customOptionInfo);
     }
@@ -838,7 +888,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function isFullFillmentProcess($params)
     {
-        if (isset($params [self::ORDER_SHIPMENT]) || isset($params [self::ORDER_INVOICE]) || isset($params [self::ORDER_REFUND])) {
+        if (isset($params [self::ORDER_SHIPMENT]) || isset($params [self::ORDER_INVOICE]) 
+                            || isset($params [self::ORDER_REFUND])) {
             return true;
         }
         return false;
@@ -860,8 +911,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $shipmentsInfo['order_id'] = $order->getId();
                 $shipmentsInfo['order_status'] = $order->getStatus();
                 $shipmentsInfo['total_ordered_qty'] = $order->getData('total_qty_ordered');
-                $shipmentsInfo['user_id'] = $order->getData('customer_is_guest') ? self::ANONYMOUS_USER : $order->getData('customer_id');
-                $shipmentsInfo['user_mail'] = $order->getData('customer_is_guest') ? $order->getData('customer_email') : $order->getData('customer_email');
+                $shipmentsInfo['user_id'] = $order->getData('customer_is_guest') ? 
+                                                self::ANONYMOUS_USER : $order->getData('customer_id');
+                $shipmentsInfo['user_mail'] = $order->getData('customer_is_guest') ? 
+                                                $order->getData('customer_email') : $order->getData('customer_email');
                 $shipmentsInfo['created_at'] = $order->getData('updated_at');
                 foreach ($order->getAllVisibleItems() as $item) {
                     if ($item->getQtyShipped() === '') {
@@ -895,7 +948,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function isRegisterCheckout($order)
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $checkoutMethod = $objectManager->create('Magento\Quote\Model\Quote')->load($order->getQuoteId())->getCheckoutMethod(true);
+        $checkoutMethod = $objectManager->create('Magento\Quote\Model\Quote')
+                            ->load($order->getQuoteId())->getCheckoutMethod(true);
 
         if ($checkoutMethod !== 'register') {
             return false;
@@ -937,7 +991,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                     $data['account_created'] = $this->_date->date('Y-m-d');
                     break;
             }
-            $customer_data = $objectManager->create('Magento\Customer\Model\Customer')->load($customer->getId());
+            $customer_data = $objectManager->create('Magento\Customer\Model\Customer')
+                                ->load($customer->getId());
             $data['user_id'] = $customer->getId();
             $data['user_name'] = $customer_data->getFirstname() . ' ' . $customer_data->getLastname();
             $data['user_mail'] = $customer_data->getEmail();
@@ -960,10 +1015,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getSubscriptionStatus($customerId)
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $subscriberFactory = $objectManager->create('Magento\Newsletter\Model\Subscriber')->loadByCustomerId($customerId);
+        $subscriberFactory = $objectManager->create('Magento\Newsletter\Model\Subscriber')
+                            ->loadByCustomerId($customerId);
         $status = '';
 
-        if(!empty($subscriberFactory)) {
+        if (!empty($subscriberFactory)) {
             switch ($subscriberFactory->getSubscriberStatus()) {
                 case self::STATUS_UNSUBSCRIBED:
                     $status = 'Unsubscribed';
@@ -1000,7 +1056,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $data = [];
 
         $visitor_data = $coreSession->getVisitorData();
-        $sessionId = $visitor_data['session_id'] ? $visitor_data['session_id'] : $visitor_data['session_id'] . strtotime(date('Y-m-d H:i:s'));
+        $sessionId = $visitor_data['session_id'] ? $visitor_data['session_id'] : 
+                        $visitor_data['session_id'] . strtotime(date('Y-m-d H:i:s'));
         $session = $sessionId;
 
         $data ['session_id'] = $session;
@@ -1016,14 +1073,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function removeCookies()
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $_cookieManagerInterface = $objectManager->create('\Magento\Framework\Stdlib\CookieManagerInterface');
+        $_cookieManagerInterface=$objectManager->create('\Magento\Framework\Stdlib\CookieManagerInterface');
         $_cookieMetadata = $objectManager->get('Magento\Framework\Stdlib\Cookie\CookieMetadataFactory');
         $coreSession = $objectManager->create('Magento\Framework\Session\SessionManagerInterface');
         $metadata = $_cookieMetadata->createPublicCookieMetadata()
-            ->setDuration(self::TIMEOUT)
-            ->setPath('/')
-            ->setDomain($coreSession->getCookieDomain())
-            ->setHttpOnly(false);
+                        ->setDuration(self::TIMEOUT)
+                        ->setPath('/')
+                        ->setDomain($coreSession->getCookieDomain())
+                        ->setHttpOnly(false);
 
         $_cookieManagerInterface->deleteCookie('trackingsession', $metadata);
         $_cookieManagerInterface->deleteCookie('targetbay_session_id', $metadata);
@@ -1044,8 +1101,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getInfo($object)
     {
-        //$customer = $object->getCustomer();
-        //$items = $object->getAllVisibleItems();
         $data = $this->getSessionInfo($object);
 
         if ($object->getCustomerIsGuest()) {
@@ -1060,7 +1115,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $gName = !empty($guestUsername) ? $guestUsername : self::ANONYMOUS_USER;
-        $data ['user_name'] = $object->getCustomerIsGuest() ? $gName : $data ['first_name'] . ' ' . $data ['last_name'];
+        $data ['user_name'] = $object->getCustomerIsGuest() ? $gName : 
+                                $data ['first_name'] . ' ' . $data ['last_name'];
         $data ['user_mail'] = $object->getCustomerEmail();
         $data ['order_id'] = $object->getId();
         $data ['order_price'] = $object->getSubtotal();
@@ -1105,11 +1161,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $data ['category'] = $this->getProductCategory($product);
             
         // Get product url key
-        if(!empty($product->getUrlKey())) {
+        if (!empty($product->getUrlKey())) {
             $urlKey = $product->getUrlKey();
         } else {
             $urlKey = $product->getProductUrl();
-        }            
+        }
         $data ['url_key'] = $product->getUrlKey();
         $data ['full_url_key'] = $product->getProductUrl();
 
@@ -1117,11 +1173,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $customOptions = [];
 
         if ($configData = $product->getData('configurable_attributes_data')) {
-            $this->debug('11');
             $configOptions = $this->productOptions($configData, 'label');
         }
         if ($custOptions = $product->getData('product_options')) {
-            $this->debug('22');
             $customOptions = $this->productOptions($custOptions);
         }
         $options = array_merge($configOptions, $customOptions);
@@ -1213,7 +1267,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $data;
     }
 
-    // ToDo: Unused method?
     public function getQuoteItemsInfo($quoteId)
     {
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
@@ -1301,7 +1354,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $format = $this->getCouponCodeFormat();
         $length = $this->getCouponCodeLength();
         if (empty($format)) {
-            // ToDo: unused??
             $format = \Magento\SalesRule\Helper\Coupon::COUPON_FORMAT_ALPHANUMERIC;
         } else {
             $charset = $objectManager->get('Magento\SalesRule\Helper\Coupon')->getCharset($format);
@@ -1388,9 +1440,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $eventHandle = $objectManager->get('Targetbay\Tracking\Observer\EventHandles');
         $eventHandle->setCookieValues();
 
-        // Page Visit Tracking.
-        //$data = $this->visitInfo();
-
         return $this->visitInfo();
     }
 
@@ -1408,7 +1457,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $data = $this->visitInfo();
         $data['category_id'] = $category->getId();
         $data['category_url'] = $category->getUrl();
-        $data['category_name'] = $objectManager->get('Magento\Framework\Escaper')->escapeQuote($category->getName());
+        $data['category_name'] = $objectManager->get('Magento\Framework\Escaper')
+                                                ->escapeQuote($category->getName());
 
         return $data;
     }
@@ -1423,7 +1473,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $registry = $objectManager->get('\Magento\Framework\Registry');
 
-        // Get the base visit info.
         $data = $this->visitInfo();
         $productData = $registry->registry('product');
         $product = $objectManager->get('Magento\Catalog\Model\Product')->load($productData->getId());
@@ -1432,17 +1481,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if (count($categoryIds)) {
             $firstCategoryId = $categoryIds[0];
             $_category = $objectManager->get('Magento\Catalog\Model\Category')->load($firstCategoryId);
-            $data['category'] = $objectManager->get('Magento\Framework\Escaper')->escapeQuote($_category->getName());
+            $data['category'] = $objectManager->get('Magento\Framework\Escaper')
+                                        ->escapeQuote($_category->getName());
         }
         $data['product_id'] = $product->getId();
-        $data['product_name'] = $objectManager->get('Magento\Framework\Escaper')->escapeQuote($product->getName());
+        $data['product_name'] = $objectManager->get('Magento\Framework\Escaper')
+                                    ->escapeQuote($product->getName());
         $data['msrp_price'] = $product->getMsrp();
         $data['price'] = $product->getPrice();
         $data['productimg'] = $this->getImageUrl($product, 'image');
         $data['abstract'] = $product->getAbstract();
 
         $data['stock'] = self::OUT_OF_STOCK;
-        //$stock = $product->getStockItem();
         if ($product->isAvailable()) {
             $data['stock'] = self::IN_STOCK;
         }
@@ -1468,6 +1518,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $moduleName = $requestInterface->getModuleName();
             $reviewProductId = $this->_coreSession->getProductReviewId();
             $tbReviewCount = $this->_coreSession->getProductReviewCacheCount();
+            $currentTime = time();
 
             $data = [];
             $type = self::RATINGS_STATS;
@@ -1493,7 +1544,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $responseBody = json_decode($response);
 
                 if ($responseBody->reviews_count > 0) {
-                    $_SESSION['last_session'] = time();
+                    $this->_coreSession->setLastSession($currentTime);
                     $this->_coreSession->setProductReviewCount($responseBody->reviews_count);
                     $this->_coreSession->setProductReviewResponse($responseBody);
                     if (!empty($productId)) {
@@ -1561,6 +1612,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         try {            
             $siteReviewCount = $this->_coreSession->getSiteReviewCount();
             $tbSiteReviewCount = $this->_coreSession->getSiteReviewCacheCount();
+            $currentTime = time();
 
             $data = [];
             $type = self::RATINGS_STATS;
@@ -1574,7 +1626,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $responseBody = json_decode($response);
 
                 if ($responseBody->reviews_count > 0) {
-                    $_SESSION['last_session'] = time();
+                    $this->_coreSession->setLastSession($currentTime);
                     $this->_coreSession->setSiteReviewCount($responseBody->reviews_count);
                     $this->_coreSession->setSiteReviewResponse($responseBody);
                     $this->_coreSession->unsSiteReviewCacheCount();
@@ -1620,6 +1672,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $moduleName = $requestInterface->getModuleName();
             $reviewProductId = $this->_coreSession->getProductReviewId();
             $tbQaReviewCount = $this->_coreSession->getQaReviewCacheCount();
+            $currentTime = time();
 
             $data = [];
             $type = self::QUESTION_STATS;
@@ -1644,7 +1697,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $responseBody = json_decode($response);
 
                 if ($responseBody->qa_count > 0) {
-                    $_SESSION['last_session'] = time();
+                    $this->_coreSession->setLastSession($currentTime);
                     $this->_coreSession->setQaReview($responseBody->qa_count);
                     $this->_coreSession->setQaReviewResponse($responseBody);
                     if (!empty($productId)) {

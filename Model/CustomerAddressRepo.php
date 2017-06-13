@@ -18,12 +18,12 @@ class CustomerAddressRepo implements CustomerAddressRepoInterface
     /**
      * @var \Magento\Customer\Api\Data\AddressSearchResultsInterfaceFactory
      */
-    protected $addressSearchResultsFactory;
+    public $addressSearchResultsFactory;
 
     /**
      * @var \Magento\Customer\Model\AddressRegistry
      */
-    protected $addressRegistry;
+    public $addressRegistry;
 
     /**
      * @param \Magento\Customer\Model\AddressRegistry $addressRegistry

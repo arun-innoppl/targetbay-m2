@@ -3,35 +3,32 @@
 namespace Targetbay\Tracking\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
 
 class SaveAccountDataEventHandler implements ObserverInterface
 {
-    //const ANONYMOUS_USER = 'anonymous';
-    //const ALL_PAGES = 'all';
-    //const PAGE_VISIT = 'page-visit';
-    //const PAGE_REFERRAL = 'referrer';
-
     const CUSTOMER_ACCOUNT = 'change-user-account-info';
 
-    protected $_trackingHelper;
-    protected $_checkoutSession;
-    protected $_customerSession;
-    protected $_date;
+    public $trackingHelper;
+    public $checkoutSession;
+    public $customerSession;
+    public $date;
 
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Magento\Framework\Stdlib\DateTime\DateTime $_date,
-        \Magento\Checkout\Model\Session $_checkoutSession,
-        \Magento\Customer\Model\Session $_customerSession,
-        \Targetbay\Tracking\Helper\Data $_trackingHelper
+        \Magento\Framework\Stdlib\DateTime\DateTime $date,
+        CheckoutSession $checkoutSession,
+        CustomerSession $customerSession,
+        \Targetbay\Tracking\Helper\Data $trackingHelper
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_checkoutSession = $_checkoutSession;
-        $this->_customerSession = $_customerSession;
-        $this->_date = $_date;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_checkoutSession = $checkoutSession;
+        $this->_customerSession = $customerSession;
+        $this->_date = $date;
         $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName = $this->_trackingHelper->getApiIndex();
         $this->_tbHost = $this->_trackingHelper->getHostname();

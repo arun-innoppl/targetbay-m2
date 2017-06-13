@@ -4,21 +4,17 @@ namespace Targetbay\Tracking\Block\Product;
 
 class Richsnippets extends \Magento\Framework\View\Element\Template
 {
-    protected $trackingHelper;
-    protected $registry;
-    //protected $escaper;
+    public $trackingHelper;
+    public $registry;
 
     public function __construct(
-            \Magento\Framework\View\Element\Template\Context $context,
-            \Targetbay\Tracking\Helper\Data $trackingHelper,
-            \Magento\Framework\Registry $registry
-            //\Magento\Framework\Escaper $escaper
-        )
-    {
+        \Magento\Framework\View\Element\Template\Context $context,
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Framework\Registry $registry
+    ) {
         parent::__construct($context);
         $this->trackingHelper = $trackingHelper;
         $this->registry = $registry;
-        //$this->escaper = $escaper;
         if ((int)$this->trackingHelper->getRichsnippetType()) {
             $this->setTemplate('Targetbay_Tracking::product/richsnippets.phtml');
         }
@@ -54,11 +50,13 @@ class Richsnippets extends \Magento\Framework\View\Element\Template
         return $product->getSku();
     }
 
-    public function getProductReviews() {
+    public function getProductReviews()
+    {
         return $this->trackingHelper->getRichSnippets();
     }
 
-    public function getSnippetType() {
+    public function getSnippetType()
+    {
         return $this->trackingHelper->getRichsnippetType();
     }
 }

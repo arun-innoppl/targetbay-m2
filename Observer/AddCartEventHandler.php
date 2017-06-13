@@ -9,18 +9,18 @@ class AddCartEventHandler implements ObserverInterface
 {
     const ADD_TO_CART = 'add-to-cart';
 
-    protected $_cart;
-    protected $_trackingHelper;
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    public $cart;
+    public $trackingHelper;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Checkout\Model\Cart $_cart
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Checkout\Model\Cart $cart
     ) {
-        $this->_cart = $_cart;
-        $this->_trackingHelper  = $_trackingHelper;
+        $this->_cart = $cart;
+        $this->_trackingHelper  = $trackingHelper;
         $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName = $this->_trackingHelper->getApiIndex();
         $this->_tbHost = $this->_trackingHelper->getHostname();
@@ -66,7 +66,7 @@ class AddCartEventHandler implements ObserverInterface
 
         $data['price'] = $item->getProduct()->getFinalPrice();
 
-        if($customOptions = $this->_trackingHelper->getCustomOptionsInfo($item, null)) {
+        if ($customOptions == $this->_trackingHelper->getCustomOptionsInfo($item, null)) {
             $data['attributes'] = $customOptions;
         }
         $this->pushPages($data, self::ADD_TO_CART);

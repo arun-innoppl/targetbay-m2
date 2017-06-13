@@ -20,35 +20,35 @@ class UpdateRewardPoints implements UpdateRewardPointsInterface
     /**
      * @var \Magento\Framework\App\RequestInterface
      */
-    protected $_request;
+    public $request;
 
     /**
      * @var \Targetbay\Tracking\Helper\Data
      */
-    protected $_trackingHelper;
+    public $trackingHelper;
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
-    protected $_storeManager;
+    public $storeManager;
 
     /**
      * Reward helper
      *
      * @var \Magento\Reward\Helper\Data
      */
-    //protected $_rewardData;
+    //public $rewardData;
 
     public function __construct(
-        \Magento\Framework\App\RequestInterface $_request,
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Store\Model\StoreManagerInterface $_storeManager
-        //Magento\Reward\Helper\Data $_rewardData
+        \Magento\Framework\App\RequestInterface $request,
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
+        //\Magento\Reward\Helper\Data $rewardData
     ) {
-        $this->_request = $_request;
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_storeManager = $_storeManager;
-        //$this->_rewardData = $_rewardData;
+        $this->_request = $request;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_storeManager = $storeManager;
+        //$this->_rewardData = $rewardData;
     }
 
     /**
@@ -58,17 +58,16 @@ class UpdateRewardPoints implements UpdateRewardPointsInterface
      */
     public function save()
     {
-        // Do not process if reward points not enabled.
         $customerId = $this->_request->getParam('customer_id');
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $customerData = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
         $storeId = $this->getStoreId();
         $websiteId = $this->_storeManager->getStore($storeId)->getWebsiteId();
-        //if (!$this->_rewardData->isEnabledOnFront($websiteId)) {
-          //  return false;
-        //}
+        /*if (!$this->_rewardData->isEnabledOnFront($websiteId)) {
+            return false;
+        }
 
-        /*$rewardFactory = $objectManager->create('Magento\Reward\Model\Reward');
+        $rewardFactory = $objectManager->create('Magento\Reward\Model\Reward');
 
         if (null !== $customerData) {
             $rewardFactory->setCustomerId($customerId)

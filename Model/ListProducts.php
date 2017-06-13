@@ -57,7 +57,7 @@ class ListProducts implements ListProductInterface
             }
             
             // Get product url key
-            if(!empty($product->getUrlKey())) {
+            if (!empty($product->getUrlKey())) {
                 $urlKey = $product->getUrlKey();
             } else {
                 $urlKey = $product->getProductUrl();
@@ -65,7 +65,8 @@ class ListProducts implements ListProductInterface
 
             $products[$id]['image_url'] = $imageUrl;
             $products[$id]['category_id'] = implode(',', $categoryIds);
-            $products[$id]['stock_count'] = $stockState->getStockQty($product->getId(), $product->getStore()->getWebsiteId());
+            $products[$id]['stock_count'] = $stockState->getStockQty($product->getId(), 
+                                                                $product->getStore()->getWebsiteId());
             $products[$id]['abstract'] = $product->getAbstract();
             $products[$id]['currency'] = $store->getCurrentCurrencyCode();
             $products[$id]['visibility'] = $product->getVisibility();
@@ -76,14 +77,14 @@ class ListProducts implements ListProductInterface
             $products[$id]['price'] = $product->getFinalPrice();
             $products[$id]['special_price'] = $product->getSpecialPrice();
 
-            if(count($product->getRelatedProductIds()) > 0) {
-            $products[$id]['related_product_id'] = implode(',', $product->getRelatedProductIds());
+            if (count($product->getRelatedProductIds()) > 0) {
+                $products[$id]['related_product_id'] = implode(',', $product->getRelatedProductIds());
             }
-            if(count($product->getUpSellProductIds()) > 0) {
-            $products[$id]['upsell_product_id'] = implode(',', $product->getUpSellProductIds());
+            if (count($product->getUpSellProductIds()) > 0) {
+                $products[$id]['upsell_product_id'] = implode(',', $product->getUpSellProductIds());
             }
-            if(count($product->getCrossSellProductIds()) > 0) {
-            $products[$id]['crosssell_product_id'] = implode(',', $product->getCrossSellProductIds());
+            if (count($product->getCrossSellProductIds()) > 0) {
+                $products[$id]['crosssell_product_id'] = implode(',', $product->getCrossSellProductIds());
             }
 
             $configOptions = [];
@@ -104,20 +105,22 @@ class ListProducts implements ListProductInterface
                     }
                     $products[$id]['child_items'] = $childProductData;
                     $products[$id]['parent_id'] = $product->getId();
-                break;
+                    break;
                 case self::BUNDLE_PRODUCT:
                     $collection = $product->getTypeInstance(true)
-                        ->getSelectionsCollection($product->getTypeInstance(true)->getOptionsIds($product), $product);
+                        ->getSelectionsCollection($product->getTypeInstance(true)->getOptionsIds($product), 
+                                                    $product);
 
                     foreach ($collection as $item) {
                         $childProductId = $item->getId();
                         $childProductDetails = $productFactory->create()->load($item->getId());
-                        $childProductData[$childProductId] = $trackingHelper->getProductData($childProductDetails);
+                        $childProductData[$childProductId] = $trackingHelper->getProductData(
+                                                                                    $childProductDetails);
                         $childProductData[$childProductId]['parent_id'] = $product->getId();
                     }
                     $products[$id]['child_items'] = $childProductData;
                     $products[$id]['parent_id'] = $product->getId();
-                break;
+                    break;
                 case self::GROUPED_PRODUCT:
                     $collection = $product->getTypeInstance(true)->getAssociatedProducts($product);
 
@@ -129,7 +132,7 @@ class ListProducts implements ListProductInterface
                     }
                     $products[$id]['child_items'] = $childProductData;
                     $products[$id]['parent_id'] = $product->getId();
-                break;
+                    break;
             }
 
             if ($custOptions = $productFactory->create()->load($product->getId())->getOptions()) {

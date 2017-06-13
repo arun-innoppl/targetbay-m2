@@ -7,7 +7,6 @@
 -->
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../app/code/Magento/Webapi/etc/webapi.xsd">
 
-    <!-- Example: curl http://localhost/magento_21/rest/V1/totalproduct/add/1/2 -->
     <route url="/V1/targetbay/totalproductcount" method="GET">
         <service class="Targetbay\Tracking\Api\TotalProductInterface" method="totalproductcount"/>
         <resources>

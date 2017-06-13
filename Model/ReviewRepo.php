@@ -16,17 +16,17 @@ use Targetbay\Tracking\Api\ReviewRepoInterface;
 class ReviewRepo implements ReviewRepoInterface
 {
     /**
-     * @var \Targetbay\Tracking\Helper\Data $_trackingHelper
+     * @var \Targetbay\Tracking\Helper\Data $trackingHelper
      */
-    protected $_trackingHelper;
+    public $trackingHelper;
 
     /**
      * @param \Targetbay\Tracking\Helper\Data $trackingHelper
      */
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper
+        \Targetbay\Tracking\Helper\Data $trackingHelper
     ) {
-        $this->_trackingHelper = $_trackingHelper;
+        $this->_trackingHelper = $trackingHelper;
     }
 
     /**

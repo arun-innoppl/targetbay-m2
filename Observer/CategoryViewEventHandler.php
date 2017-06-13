@@ -8,21 +8,21 @@ class CategoryViewEventHandler implements ObserverInterface
 {
     const CATEGORY_VIEW = 'category-view';
 
-    protected $_trackingHelper;
-    protected $_registry;
+    public $trackingHelper;
+    public $registry;
 
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Framework\Registry $_registry
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Framework\Registry $registry
     ) {
-        $this->_trackingHelper  = $_trackingHelper;
-        $this->_registry = $_registry;
-        $this->_apiToken        = '?api_token=' . $this->_trackingHelper->getApiToken();
-        $this->_indexName       = $this->_trackingHelper->getApiIndex();
+        $this->_trackingHelper  = $trackingHelper;
+        $this->_registry = $registry;
+        $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
+        $this->_indexName = $this->_trackingHelper->getApiIndex();
         $this->_tbHost   = $this->_trackingHelper->getHostname();
     }
 

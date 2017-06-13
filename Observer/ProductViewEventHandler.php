@@ -12,26 +12,25 @@ class ProductViewEventHandler implements ObserverInterface
     const PAGE_REFERRAL = 'referrer';
     const PRODUCT_VIEW = 'product-view';
 
-    // product stock status
     const IN_STOCK = 'in-stock';
     const OUT_OF_STOCK = 'out-stock';
 
-    protected $_productRepository;
-    protected $_trackingHelper;
-    protected $_registry;
+    public $productRepository;
+    public $trackingHelper;
+    public $registry;
 
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Catalog\Model\ProductRepository $_productRepository,
-        \Magento\Framework\Registry $_registry
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Catalog\Model\ProductRepository $productRepository,
+        \Magento\Framework\Registry $registry
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_productRepository = $_productRepository;
-        $this->_registry = $_registry;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_productRepository = $productRepository;
+        $this->_registry = $registry;
         $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName = $this->_trackingHelper->getApiIndex();
         $this->_tbHost = $this->_trackingHelper->getHostname();
@@ -49,7 +48,7 @@ class ProductViewEventHandler implements ObserverInterface
         $data ['index_name'] = $this->_indexName;
         try {
             $res = $this->_trackingHelper->postPageInfo($endPointUrl, json_encode($data));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->_trackingHelper->debug(" '$type' ERROR:" . $e->getMessage());
         }
     }
@@ -65,7 +64,7 @@ class ProductViewEventHandler implements ObserverInterface
         }
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $priceHelper = $objectManager->create('Magento\Framework\Pricing\Helper\Data');
-        // Get the base visit info
+
         $data = $this->_trackingHelper->visitInfo();
         $product = $this->_registry->registry('product');
         $data ['category'] = $this->_trackingHelper->getProductCategory($product);
@@ -75,7 +74,7 @@ class ProductViewEventHandler implements ObserverInterface
         $data ['price'] = $product->getPrice();
         $data ['productimg'] = $this->_trackingHelper->getImageUrl($product, 'image');
         $data ['stock'] = self::OUT_OF_STOCK;
-        //$stock = $product->getStockItem();
+
         if ($product->isAvailable()) {
             $data['stock'] = self::IN_STOCK;
         }

@@ -17,28 +17,28 @@ class Tbreviewcount implements TbreviewcountInterface
 {
 
     /**
-     * @var \Magento\Framework\App\RequestInterface $_request
+     * @var \Magento\Framework\App\RequestInterface $request
      */
-    protected $_request;
+    public $request;
 
     /**
-     * @var \Targetbay\Tracking\Helper\Data $_trackingHelper
+     * @var \Targetbay\Tracking\Helper\Data $trackingHelper
      */
-    protected $_trackingHelper;
+    public $trackingHelper;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface $_storeManager
+     * @var \Magento\Store\Model\StoreManagerInterface $storeManager
      */
-    protected $_storeManager;
+    public $storeManager;
 
     public function __construct(
-        \Magento\Framework\App\RequestInterface $_request,
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Store\Model\StoreManagerInterface $_storeManager
+        \Magento\Framework\App\RequestInterface $request,
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
-        $this->_request = $_request;
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_storeManager = $_storeManager;
+        $this->_request = $request;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_storeManager = $storeManager;
     }
 
     /**
@@ -50,23 +50,26 @@ class Tbreviewcount implements TbreviewcountInterface
     {
         $pageReference = $this->_request->getParam('page_identifier') ? $this->_request->getParam('page_identifier') : '';
 
-        $reviewCount = $this->_request->getParam('review_count') ? Mage::app()->getRequest()->getParam('review_count') : '';
+        $reviewCount = $this->_request->getParam('review_count') ? $this->_request->getParam('review_count') : '';
 
         $productId = $this->_request->getParam('product_id') ? $this->_request->getParam('product_id') : '';
+
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $coreSession = $objectManager->create('Magento\Framework\Session\SessionManagerInterface');
 
         if (!empty($pageReference) && $reviewCount > 0) {
             try {
                 if ($pageReference == Targetbay_Tracking_Helper_Data::RATINGS_STATS) {
-                    Mage::getSingleton('core/session')->setProductReviewCount($reviewCount);
+                    $coreSession->setProductReviewCount($reviewCount);
                 } elseif ($pageReference == Targetbay_Tracking_Helper_Data::QUESTION_STATS) {
-                    Mage::getSingleton('core/session')->setQaReviewCount($reviewCount);
+                    $coreSession->setQaReviewCount($reviewCount);
                 } elseif ($pageReference == Targetbay_Tracking_Helper_Data::RATINGS_STATS
                     && $productId == ''
                 ) {
-                    Mage::getSingleton('core/session')->setSiteReviewCount($reviewCount);
+                    $coreSession->setSiteReviewCount($reviewCount);
                 }
             } catch (\Exception $e) {
-                Mage::helper('tracking')->debug($e->getMessage());
+                $this->_trackingHelper->debug('Error :' . $e);
             }
             return true;
         } else {

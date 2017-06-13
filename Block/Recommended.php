@@ -4,27 +4,27 @@ namespace Targetbay\Tracking\Block;
 
 class Recommended extends \Magento\Framework\View\Element\Template
 {
-    protected $_trackingHelper;
-    protected $_request;
-    protected $_cmsPage;
+    public $trackingHelper;
+    public $request;
+    public $cmsPage;
     
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Framework\App\Request\Http $_request,
-        \Magento\Cms\Model\Page $_cmsPage
-    )
-    {
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Framework\App\Request\Http $request,
+        \Magento\Cms\Model\Page $cmsPage
+    ) {
         parent::__construct($context);
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_request = $_request;
-        $this->_cmsPage = $_cmsPage;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_request = $request;
+        $this->_cmsPage = $cmsPage;
         if ($this->_trackingHelper->trackingEnabled()) {
             $this->setTemplate('Targetbay_Tracking::recommended.phtml');
         }
     }
 
-    public function getMostReviewedPlaceholder() {
+    public function getMostReviewedPlaceholder()
+    {
         $routeName = $this->_request->getRouteName();
         $identifier = $this->_cmsPage->getIdentifier();
 

@@ -28,23 +28,26 @@
 	<event name="controller_action_predispatch_checkout_cart_index">
 		<observer name="targetbay_tracking_event_cart_index_visit" instance="Targetbay\Tracking\Observer\CartEventHandler" />
 	</event>
-	<event name="controller_action_postdispatch_checkout_cart_index">
+	<!--event name="controller_action_postdispatch_checkout_cart_index">
 		<observer name="targetbay_tracking_event_cart_visit" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
-	</event>
+	</event-->
 	<event name="controller_action_predispatch_checkout_cart_updatePost">
 		<observer name="targetbay_tracking_event_cart_empty" instance="Targetbay\Tracking\Observer\EmptyCartEventHandler" />
 	</event>
 	<event name="controller_action_postdispatch_checkout_index_index">
 	<observer name="targetbay_tracking_event_checkout_visit" instance="Targetbay\Tracking\Observer\CheckoutEventHandler" />
 	</event>
-	<!--<event name="sales_convert_quote_to_order">
+	<event name="sales_convert_quote_to_order">
 		<observer name="targetbay_tracking_event_sales_ship_bill" instance="Targetbay\Tracking\Observer\SaveAddressDataEventHandler" />
-	</event>-->
+	</event>
 	<event name="controller_action_postdispatch_customer_account_editPost">
 		<observer name="targetbay_tracking_event_customer_visit" instance="Targetbay\Tracking\Observer\SaveAccountDataEventHandler" />
 	</event>
-	<event name="sales_order_save_after">
+	<event name="sales_order_place_after">
 		<observer name="targetbay_tracking_event_sales_order" instance="Targetbay\Tracking\Observer\CreateOrderEventHandler" />
+	</event>
+	<event name="sales_order_save_after">
+		<observer name="targetbay_tracking_event_sales_order_status" instance="Targetbay\Tracking\Observer\OrderStatusEventHandler" />
 	</event>
 	<event name="customer_register_success">
 		<observer name="targetbay_tracking_event_customer_register" instance="Targetbay\Tracking\Observer\UserRegisterEventHandler" />
@@ -52,22 +55,22 @@
 	<event name="customer_login">
 		<observer name="targetbay_tracking_event_customer_login" instance="Targetbay\Tracking\Observer\UserLoginEventHandler" />
 	</event>
-	<!--<event name="customer_logout">
+	<event name="customer_logout">
 		<observer name="targetbay_tracking_event_customer_logout" instance="Targetbay\Tracking\Observer\UserLogoutEventHandler" />
-	</event>-->
+	</event>
 	<event name="catalog_product_save_after">
 		<observer name="targetbay_tracking_event_add_product" instance="Targetbay\Tracking\Observer\AddProductEventHandler" />
 	</event>
-	<!--<event name="controller_action_postdispatch_catalog_category_view">
+	<event name="controller_action_postdispatch_catalog_category_view">
 		<observer name="targetbay_tracking_event_category_visit" instance="Targetbay\Tracking\Observer\CategoryViewEventHandler" />
-	</event>-->
+	</event>
 	<event name="controller_action_postdispatch_catalog_product_view">
 		<observer name="targetbay_tracking_event_product_visit" instance="Targetbay\Tracking\Observer\ProductViewEventHandler" />
 	</event>
-	<!--<event name="controller_action_postdispatch_catalogsearch_result_index">
+	<event name="controller_action_postdispatch_catalogsearch_result_index">
 		<observer name="targetbay_tracking_event_product_search" instance="Targetbay\Tracking\Observer\SearchProductEventHandler" />
-	</event>-->
-	<!--<event name="wishlist_product_add_after">
+	</event>
+	<event name="wishlist_product_add_after">
 		<observer name="targetbay_tracking_event_add_wishlist" instance="Targetbay\Tracking\Observer\AddWishlistEventHandler" />
 	</event>
 	<event name="controller_action_predispatch_wishlist_index_update">
@@ -75,7 +78,7 @@
 	</event>
 	<event name="controller_action_predispatch_wishlist_index_remove">
 		<observer name="targetbay_tracking_event_delete-wishlist" instance="Targetbay\Tracking\Observer\DeleteWishlistEventHandler" />
-	</event>-->
+	</event>
 	<event name="controller_action_postdispatch_wishlist_index_index">
 		<observer name="targetbay_tracking_event_wishlist_visit" instance="Targetbay\Tracking\Observer\CmsEventHandles" />
 	</event>

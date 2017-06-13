@@ -12,7 +12,7 @@
             <group id="tracking_groups" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Tracking Setup</label>
                 <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enable Module:</label>
+                    <label>Enable Module</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>
                         Enable or disable the tracking module.
@@ -42,6 +42,10 @@
                     <source_model>Targetbay\Tracking\Model\System\Config\Source\Snippetstatus</source_model>
                     <can_be_empty>1</can_be_empty>
                 </field>
+                <field id="manage_stock" translate="label" type="select" sortOrder="163" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Backorders</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="tracking_script" translate="label" type="textarea" sortOrder="165" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Tracking Script</label>
                 </field>
@@ -49,14 +53,14 @@
                     <label>Reviews per page</label>
                 </field>
                 <field id="debug" translate="label comment" type="select" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enable Debug:</label>
+                    <label>Enable Debug</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>
                         Enable or disable the Debugging.
                     </comment>
                 </field>
                 <field id="disable_email" translate="label" type="select" sortOrder="176" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Disable email:</label>
+                    <label>Disable email</label>
                     <source_model>Targetbay\Tracking\Model\System\Config\Source\Yesno</source_model>
                     <comment>
                         Enable or disable customer welcome mail and newsletter subscription mail

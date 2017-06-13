@@ -17,14 +17,14 @@ class CartItemRepo implements CartItemRepoInterface
 {
 
     /**
-     * @var \Targetbay\Tracking\Helper\Data $_trackingHelper
+     * @var \Targetbay\Tracking\Helper\Data $trackingHelper
      */
-    protected $_trackingHelper;
+    public $trackingHelper;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper
+        \Targetbay\Tracking\Helper\Data $trackingHelper
     ) {
-        $this->_trackingHelper = $_trackingHelper;
+        $this->_trackingHelper = $trackingHelper;
     }
 
     /**
@@ -34,8 +34,6 @@ class CartItemRepo implements CartItemRepoInterface
      */
     public function getList(\Magento\Framework\Api\SearchCriteria $searchCriteria)
     {
-
-        //$cartItems = $cartItemData = array();
         $quoteCollection = $this->getQuoteCollectionQuery($searchCriteria);
         $cartItems = [];
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
@@ -77,7 +75,9 @@ class CartItemRepo implements CartItemRepoInterface
             ->addFieldToFilter('customer_email', ['neq' => ''])
             ->addFieldToFilter('customer_id', ['neq' => '']);
 
-        $quoteCollection->getSelect()->join(['Q2' => $quoteTable], '`main_table`.`entity_id` = `Q2`.`quote_id`', ['*'])->group('Q2.quote_id');
+        $quoteCollection->getSelect()->join(['Q2' => $quoteTable], 
+                                            '`main_table`.`entity_id` = `Q2`.`quote_id`',
+                                            ['*'])->group('Q2.quote_id');
 
         $quoteCollection->setCurPage($searchCriteria->getCurrentPage());
         $quoteCollection->setPageSize($searchCriteria->getPageSize());

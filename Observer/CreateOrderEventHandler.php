@@ -11,23 +11,23 @@ class CreateOrderEventHandler implements ObserverInterface
     // order fullfillment process
     const ORDER_SHIPMENT = 'shipment';
 
-    protected $_request;
-    protected $_trackingHelper;
-    protected $_registry;
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
-    private $_logger;
+    public $request;
+    protected $trackingHelper;
+    protected $registry;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
+    private $logger;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Framework\App\RequestInterface $_request,
-        \Psr\Log\LoggerInterface $_logger,
-        \Magento\Framework\Registry $_registry
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        \Magento\Framework\App\RequestInterface $request,
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Registry $registry
     ) {
-        $this->_trackingHelper  = $_trackingHelper;
-        $this->_request = $_request;
-        $this->_registry = $_registry;
+        $this->_trackingHelper  = $trackingHelper;
+        $this->_request = $request;
+        $this->_registry = $registry;
         $this->_apiToken        = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName       = $this->_trackingHelper->getApiIndex();
         $this->_tbHost   = $this->_trackingHelper->getHostname();
@@ -71,10 +71,6 @@ class CreateOrderEventHandler implements ObserverInterface
                 $order_details = $objectManager->get('Magento\Sales\Model\Order');
                 $order_information = $order_details->loadByIncrementId($order_id);
 
-                if ($this->pushShipmentData($order_information, $params)) {
-                    return false;
-                } // order shipment process so no need to make order submit api.
-
                 // Captute the customer registration.
                 if ($customer = $this->_trackingHelper->isRegisterCheckout($order)) {
                     $this->pushRegisterData($customer);
@@ -88,22 +84,7 @@ class CreateOrderEventHandler implements ObserverInterface
                 $this->_logger->critical($e);
             }
         }
-        return;
-    }
-
-    public function pushShipmentData($order, $params)
-    {
-        if ($this->_trackingHelper->isFullFillmentProcess($params)) {
-            try {
-                $data = $this->_trackingHelper->getFullFillmentData($order, $params);
-                $this->pushPages($data, self::ORDER_SHIPMENT);
-                return true;
-            } catch (\Exception $e) {
-                $this->_logger->critical($e);
-            }
-        }
-
-        return false;
+        return true;
     }
 
     public function pushRegisterData($customer)
@@ -117,6 +98,6 @@ class CreateOrderEventHandler implements ObserverInterface
         } catch (\Exception $e) {
             $this->_logger->critical($e);
         }
-        return;
+        return true;
     }
 }

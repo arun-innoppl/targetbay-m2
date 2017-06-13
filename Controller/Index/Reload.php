@@ -2,29 +2,31 @@
 
 namespace Targetbay\Tracking\Controller\Index;
 
-use Magento\Framework\App\Action\Context;
-use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\App\Action\Context as Context;
+use Magento\Framework\Controller\ResultFactory; 
+use Magento\Customer\Model\Session as CustomerSession;
 
 class Reload extends \Magento\Framework\App\Action\Action
 {
     const TIMEOUT = 900;
-    private $customerSession;
-    private $cart;
-    private $coreSession;
-    private $context;
-    private $productFactory;
+
+    public $customerSession;
+    public $cart;
+    public $coreSession;
+    public $productFactory;
 
     /**
      * @param Magento\Framework\App\Action\Context $context
-     * @param \Magento\Customer\Model\Session $customerSession
+     * @param CustomerSession $customerSession
      * @param \Magento\Checkout\Model\Cart $cart
      * @param \Magento\Framework\Session\SessionManagerInterface $coreSession
      */
     public function __construct(Context $context,
-        \Magento\Customer\Model\Session $customerSession,
+        CustomerSession $customerSession,
         \Magento\Checkout\Model\Cart $cart,
         \Magento\Catalog\Model\Product $productFactory,
-        \Magento\Framework\Session\SessionManagerInterface $coreSession
+        \Magento\Framework\Session\SessionManagerInterface $coreSession,
+        \Psr\Log\LoggerInterface $logger
     ) {
         parent::__construct($context);
         $this->context=$context;
@@ -32,6 +34,7 @@ class Reload extends \Magento\Framework\App\Action\Action
         $this->coreSession = $coreSession;
         $this->cart = $cart;
         $this->productFactory = $productFactory;
+        $this->logger = $logger;
     }
 
     /**
@@ -83,10 +86,13 @@ class Reload extends \Magento\Framework\App\Action\Action
             foreach ($quoteItems as $key => $item) {
                 $product = $this->productFactory->load($item->getProductId());
                 if ($item->getProductType() == 'configurable') {
-                    $customOptions = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+                    $customOptions = $item->getProduct()->getTypeInstance(true)
+                                            ->getOrderOptions($item->getProduct());
                     $superAttributeInfo = $customOptions['info_buyRequest'];
 
-                    $params = array('qty' => $quoteItems[$i]['qty'], 'super_attribute' => $superAttributeInfo['super_attribute']);
+                    $params = array('qty' => $quoteItems[$i]['qty'], 
+                                    'super_attribute' => $superAttributeInfo['super_attribute']
+                                    );
                     $this->cart->addProduct($product, $params);
                 } else {
                     $params = array('qty' => $quoteItems[$i]['qty']);
@@ -96,7 +102,7 @@ class Reload extends \Magento\Framework\App\Action\Action
             }
             $this->cart->save();
         } catch (\Exception $e) {
-            $objectManager->get('Psr\Log\LoggerInterface')->critical($e);
+            $this->logger->addDebug('Failed to add product into cart. Error: '.$e);
         }
         return $resultRedirect;
     }

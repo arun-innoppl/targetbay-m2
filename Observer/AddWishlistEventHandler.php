@@ -3,24 +3,25 @@
 namespace Targetbay\Tracking\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Customer\Model\Session as CustomerSession;
 
 class AddWishlistEventHandler implements ObserverInterface
 {
     const WISHLIST = 'wishlist';
 
-    protected $_customerSession;
-    protected $_trackingHelper;
+    protected $customerSession;
+    protected $trackingHelper;
 
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Targetbay\Tracking\Helper\Data $_trackingHelper,
-        \Magento\Customer\Model\Session $_customerSession
+        \Targetbay\Tracking\Helper\Data $trackingHelper,
+        CustomerSession $customerSession
     ) {
-        $this->_trackingHelper  = $_trackingHelper;
-        $this->_customerSession = $_customerSession;
+        $this->_trackingHelper  = $trackingHelper;
+        $this->_customerSession = $customerSession;
         $this->_apiToken        = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName       = $this->_trackingHelper->getApiIndex();
         $this->_tbHost   = $this->_trackingHelper->getHostname();
@@ -50,7 +51,6 @@ class AddWishlistEventHandler implements ObserverInterface
         }
         $this->_customerSession->setTitle('My Wishlist');
         $wishListItems = $observer->getEvent()->getItems();
-        //$item_info = array();
         foreach ($wishListItems as $item) {
             if ($item->getParentItem()) {
                 $item = $item->getParentItem();

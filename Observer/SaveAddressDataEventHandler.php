@@ -6,27 +6,23 @@ use Magento\Framework\Event\ObserverInterface;
 
 class SaveAddressDataEventHandler implements ObserverInterface
 {
-    //const ANONYMOUS_USER = 'anonymous';
-    //const ALL_PAGES = 'all';
-    //const PAGE_VISIT = 'page-visit';
-    //const PAGE_REFERRAL = 'referrer';
     const ONESTEPCHECKOUT_ADDRESS = 'onestepcheckout';
     const BILLING = 'billing';
     const SHIPPING = 'shipping';
 
-    protected $_trackingHelper;
-    protected $_checkoutSession;
+    protected $trackingHelper;
+    protected $checkoutSession;
 
-    private $_apiToken;
-    private $_indexName;
-    private $_tbHost;
+    private $apiToken;
+    private $indexName;
+    private $tbHost;
 
     public function __construct(
-        \Magento\Checkout\Model\Session $_checkoutSession,
-        \Targetbay\Tracking\Helper\Data $_trackingHelper
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Targetbay\Tracking\Helper\Data $trackingHelper
     ) {
-        $this->_trackingHelper = $_trackingHelper;
-        $this->_checkoutSession = $_checkoutSession;
+        $this->_trackingHelper = $trackingHelper;
+        $this->_checkoutSession = $checkoutSession;
         $this->_apiToken = '?api_token=' . $this->_trackingHelper->getApiToken();
         $this->_indexName = $this->_trackingHelper->getApiIndex();
         $this->_tbHost = $this->_trackingHelper->getHostname();
